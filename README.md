@@ -14,6 +14,7 @@ O sistema é voltado para uso interno, com foco em simplicidade, organização e
 - Cadastro, edição e visualização de empresas
 - Cadastro de endereço vinculado à empresa
 - Cadastro de contato vinculado à empresa
+- Cadastro e gerenciamento de usuários
 - Listagem de empresas com busca e filtro por status
 
 ---
