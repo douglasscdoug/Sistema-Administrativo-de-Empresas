@@ -2,12 +2,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SistemaEmpresas.Domain\SistemaEmpresas.Domain.csproj" />
-    <ProjectReference Include="..\SistemaEmpresas.Application\SistemaEmpresas.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data/" />
-    <Folder Include="Repositories/" />
   </ItemGroup>
 
   <ItemGroup>

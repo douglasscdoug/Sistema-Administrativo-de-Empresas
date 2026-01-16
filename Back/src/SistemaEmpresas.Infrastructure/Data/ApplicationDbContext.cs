@@ -89,7 +89,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                     .IsRequired()
                     .HasMaxLength(2);
 
-                endereco.Property(e => e.CEP)
+                endereco.Property(e => e.Cep)
                     .IsRequired()
                     .HasMaxLength(8);
             }
