@@ -1,5 +1,6 @@
 using AutoMapper;
 using SistemaEmpresas.Application.DTOs;
+using SistemaEmpresas.Application.Exceptions;
 using SistemaEmpresas.Application.Interfaces;
 using SistemaEmpresas.Domain.Entities;
 using SistemaEmpresas.Infrastructure.Repositories;
@@ -35,6 +36,10 @@ public class EmpresaService : IEmpresaService
 
     public async Task<EmpresaResponseDto> AddAsync(EmpresaRequestDto empresaRequestDto)
     {
+        var empresaExistente = await _empresaRepository.GetByCnpjAsync(empresaRequestDto.Cnpj);
+        if(empresaExistente != null)
+            throw new BusinessException("Já existe uma empresa cadastrada com esse CNPJ.");
+            
         var empresa = _mapper.Map<Empresa>(empresaRequestDto);
         empresa.Ativo = true;
 
@@ -52,6 +57,13 @@ public class EmpresaService : IEmpresaService
         var empresa = await _empresaRepository.GetByIdForUpdateAsync(id);
         if(empresa == null)
             return null;
+
+        if(empresa.Cnpj != empresaRequestDto.Cnpj)
+        {
+            var empresaExistente = await _empresaRepository.GetByCnpjAsync(empresaRequestDto.Cnpj);
+            if(empresaExistente != null)
+                throw new BusinessException("Já existe uma empresa cadastrada com esse CNPJ.");
+        }
 
         //Empresa 
         empresa.RazaoSocial = empresaRequestDto.RazaoSocial;

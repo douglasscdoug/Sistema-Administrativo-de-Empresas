@@ -5,6 +5,9 @@ using SistemaEmpresas.Infrastructure.Data;
 using SistemaEmpresas.Application.Interfaces;
 using SistemaEmpresas.Application.Services;
 using SistemaEmpresas.API.Middlewares;
+using FluentValidation.AspNetCore;
+using SistemaEmpresas.Application.Validators;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<EmpresaRequestDtoValidator>();
 
 builder.Services.AddAutoMapper(typeof(SistemaEmpresasProfile));
 

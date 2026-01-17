@@ -36,4 +36,11 @@ public class EmpresaRepository : GeralRepository<Empresa>
             .Include(e => e.Contato)
             .FirstOrDefaultAsync(e => e.Id == id);
     }
+
+    public async Task<Empresa?> GetByCnpjAsync(string cnpj)
+    {
+        return await Context.Empresas
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Cnpj == cnpj);
+    }
 }
