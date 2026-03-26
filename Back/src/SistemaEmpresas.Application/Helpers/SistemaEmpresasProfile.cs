@@ -19,5 +19,9 @@ public class SistemaEmpresasProfile : Profile
         // ===== Empresa =====
         CreateMap<Empresa, EmpresaResponseDto>();
         CreateMap<EmpresaRequestDto, Empresa>();
+
+        // ===== Usuário =====
+        CreateMap<Usuario, UsuarioResponseDto>();
+        CreateMap<Usuario, UsuarioRequestDto>();
     }
 }
