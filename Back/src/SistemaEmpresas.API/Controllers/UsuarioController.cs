@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SistemaEmpresas.Application.DTOs;
@@ -16,6 +17,7 @@ namespace SistemaEmpresas.API.Controllers
             _usuarioService = usuarioService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +25,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(usuarios);
         }
 
+        [Authorize]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -32,6 +35,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(usuario);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UsuarioRequestDto dto)
         {

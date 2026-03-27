@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SistemaEmpresas.Application.DTOs;
@@ -16,6 +17,7 @@ namespace SistemaEmpresas.API.Controllers
             _empresaService = empresaService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,6 +25,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(empresas);
         }
 
+        [Authorize]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -34,6 +37,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(empresa);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EmpresaRequestDto empresaRequestDto)
         {
@@ -45,6 +49,7 @@ namespace SistemaEmpresas.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = empresa.Id }, empresa);
         }
 
+        [Authorize]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, EmpresaRequestDto empresaRequestDto)
         {
@@ -60,6 +65,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(empresa);
         }
 
+        [Authorize]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteEmpresa(Guid id)
         {
