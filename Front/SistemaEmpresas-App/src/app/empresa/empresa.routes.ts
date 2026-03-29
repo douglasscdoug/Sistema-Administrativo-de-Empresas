@@ -1,9 +1,9 @@
 import { Routes } from "@angular/router";
-import { EmpresaList } from "./pages/empresa-list/empresa-list";
+import { EmpresaListComponent } from "./pages/empresa-list/empresa-list.component";
 
 export const EMPRESA_ROUTES: Routes = [
     {
         path: '',
-        component: EmpresaList
+        component: EmpresaListComponent
     }
 ];
