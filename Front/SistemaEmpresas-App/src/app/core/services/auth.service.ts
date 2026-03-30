@@ -27,6 +27,30 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean { 
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    
+    if (this.isTokenExpired()) {
+      this.logout();
+      return false;
+    }
+    
+    return true;
+  }
+
+  getTokenExpiration(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp;
+  }
+
+  isTokenExpired(): boolean { 
+    const exp = this.getTokenExpiration();
+    if (!exp) return true;
+    
+    const now = Math.floor(Date.now() / 1000);
+    return exp < (now - 60); // Considera o token expirado 1 minuto antes para evitar problemas de sincronização
   }
 }
