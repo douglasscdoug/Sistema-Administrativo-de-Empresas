@@ -2,8 +2,9 @@ import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private toaster =  inject(ToastrService);
+  private toaster = inject(ToastrService);
+  private spinner = inject(NgxSpinnerService);
 
   public get f(): any{
     return this.form.controls;
@@ -29,10 +31,13 @@ export class LoginComponent {
 
   onSubmit() { 
     if (this.form.invalid) return;
-
+    this.spinner.show();
     this.authService.login(this.form.value).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => this.toaster.error('Falha no login. Verifique suas credenciais e tente novamente.', 'Erro')
-    });
+      error: () => {
+        this.spinner.hide();
+        this.toaster.error('Falha no login. Verifique suas credenciais e tente novamente.', 'Erro');
+      }
+    }).add(() => this.spinner.hide());
   }
 }

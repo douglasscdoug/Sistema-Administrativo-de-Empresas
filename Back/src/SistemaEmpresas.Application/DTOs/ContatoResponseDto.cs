@@ -1,5 +1,3 @@
-using System;
-
 namespace SistemaEmpresas.Application.DTOs;
 
 public class ContatoResponseDto : ContatoRequestDto

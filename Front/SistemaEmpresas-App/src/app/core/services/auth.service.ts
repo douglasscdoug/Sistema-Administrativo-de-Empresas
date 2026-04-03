@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { API } from '../config/api.config';
 import { tap } from 'rxjs/internal/operators/tap';
 
@@ -8,7 +8,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
   
   login(credentials: any) {
     return this.http.post<any>(API.endpoints.auth, credentials).pipe(

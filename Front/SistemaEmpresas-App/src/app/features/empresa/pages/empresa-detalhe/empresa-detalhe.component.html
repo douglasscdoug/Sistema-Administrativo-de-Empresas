@@ -1,0 +1,203 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card rounded shadow-sm">
+      <form [formGroup]="form">
+        <div class="p-3">
+          <h6>Informações gerais</h6>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label>Razão Social</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="razaoSocial"
+                placeholder="Insira a Razão Social da Empresa"
+                [ngClass]="{ 'is-invalid': isInvalid('razaoSocial') }"
+              />
+              @if (f.razaoSocial.errors?.required) {
+                <div class="invalid-feedback">Campo obrigatório</div>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label>CNPJ</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cnpj"
+                placeholder="Insira o CNPJ da Empresa"
+                [ngClass]="{ 'is-invalid': isInvalid('cnpj') }"
+              />
+              @if (f.cnpj.errors?.required) {
+                <div class="invalid-feedback">Campo obrigatório</div>
+              }
+              @if (f.cnpj.errors?.pattern) {
+                <div class="invalid-feedback">CNPJ inválido</div>
+              }
+            </div>
+          </div>
+          <hr />
+          <h6>Endereço</h6>
+          <div formGroupName="endereco">
+            <div class="row">
+              <div class="form-group col-md-6 col-12">
+                <label>Logradouro</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="logradouro"
+                  placeholder="Insira o Logradouro"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.logradouro') }"
+                />
+                @if (form.get('endereco.logradouro')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-3 col-12">
+                <label>Número</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numero"
+                  placeholder="Insira o Número"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.numero') }"
+                />
+                @if (form.get('endereco.numero')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-3 col-12">
+                <label>Complemento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="complemento"
+                  placeholder="Insira o Complemento"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-3 col-12">
+                <label>Bairro</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="bairro"
+                  placeholder="Insira o Bairro"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.bairro') }"
+                />
+                @if (form.get('endereco.bairro')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-3 col-12">
+                <label>Cidade</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="cidade"
+                  placeholder="Insira a Cidade"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.cidade') }"
+                />
+                @if (form.get('endereco.cidade')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-3 col-12">
+                <label>Estado</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="estado"
+                  placeholder="Insira o Estado"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.estado') }"
+                />
+                @if (form.get('endereco.estado')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-3 col-12">
+                <label>CEP</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="cep"
+                  placeholder="Insira o CEP"
+                  [ngClass]="{ 'is-invalid': isInvalid('endereco.cep') }"
+                />
+                @if (form.get('endereco.cep')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+            </div>
+          </div>
+          <hr />
+          <h6>Contato</h6>
+          <div formGroupName="contato">
+            <div class="row">
+              <div class="form-group col-md-4 col-12">
+                <label>Nome</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nome"
+                  placeholder="Insira o Nome do contato"
+                  [ngClass]="{ 'is-invalid': isInvalid('contato.nome') }"
+                />
+                @if (form.get('contato.nome')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+              <div class="form-group col-md-4 col-12">
+                <label>Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  placeholder="Insira o Email do contato"
+                  [ngClass]="{ 'is-invalid': isInvalid('contato.email') }"
+                />
+                @if (form.get('contato.email')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+                @if (form.get('contato.email')?.errors?.['email']) {
+                  <div class="invalid-feedback">Email inválido</div>
+                }
+              </div>
+              <div class="form-group col-md-4 col-12">
+                <label>Telefone</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="telefone"
+                  placeholder="Insira o Telefone do contato"
+                  [ngClass]="{ 'is-invalid': isInvalid('contato.telefone') }"
+                />
+                @if (form.get('contato.telefone')?.errors?.['required']) {
+                  <div class="invalid-feedback">Campo obrigatório</div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex">
+            <button
+              class="btn btn-outline-secondary me-auto border"
+              (click)="resetForm()"
+            >
+              Cancelar Alteração
+            </button>
+            <button
+              class="btn btn-success"
+              [disabled]="!form.valid"
+              (click)="salvar()"
+            >Salvar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
