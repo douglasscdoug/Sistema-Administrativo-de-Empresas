@@ -49,5 +49,27 @@ namespace SistemaEmpresas.API.Controllers
                 usuario
             );
         }
+
+        [Authorize]
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UsuarioRequestDto dto)
+        {
+            if (dto == null) return BadRequest();
+
+            var usuario = await _usuarioService.UpdateAsync(id, dto);
+            if (usuario == null) return NotFound();
+
+            return Ok(usuario);
+        }
+
+        [Authorize]
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var deleted = await _usuarioService.DeleteAsync(id);
+            if (!deleted) return NotFound();
+
+            return NoContent();
+        }
     }
 }

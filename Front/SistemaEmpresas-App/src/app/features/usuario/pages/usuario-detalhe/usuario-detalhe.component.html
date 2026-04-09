@@ -1,0 +1,76 @@
+<h4>{{this.isEditMode ? 'Editar' : 'Adicionar'}} Usuário
+  <!-- @if (!isEditMode) {
+    Adicionar Usuário
+  } @else {
+    Editar Usuário
+  } -->
+</h4>
+<div class="row">
+  <div class="col-md-12">
+    <div class="card rounded shadow-sm">
+      <form [formGroup]="form">
+        <div class="p-3">
+          <div class="row">
+            <div class="form-group col-md-6 col-12">
+              <label>Nome</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nome"
+                placeholder="Insira o nome do usuário"
+                [ngClass]="{ 'is-invalid': isInvalid('nome') }"
+              />
+              @if (f.nome.errors?.required) {
+                <div class="invalid-feedback">Campo obrigatório</div>
+              }
+            </div>
+            <div class="form-group col-md-6 col-12">
+              <label>E-mail</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="email"
+                placeholder="Insira o e-mail do usuário"
+                [ngClass]="{ 'is-invalid': isInvalid('email') }"
+              />
+              @if (f.email.errors?.required) {
+                <div class="invalid-feedback">Campo obrigatório</div>
+              }
+              @if (f.email.errors?.email) {
+                <div class="invalid-feedback">Email inválido</div>
+              }
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6 col-12">
+              <label>Senha</label>
+              <input
+                type="password"
+                class="form-control"
+                formControlName="senha"
+                placeholder="Insira a senha do usuário"
+                [ngClass]="{ 'is-invalid': isInvalid('senha') }"
+              />
+              @if (f.senha.errors?.required) {
+                <div class="invalid-feedback">Campo obrigatório</div>
+              }
+              @if (f.senha.errors?.minlength) {
+                <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres</div>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex">
+            <button class="btn btn-outline-secondary me-auto border" (click)="voltar()">
+              Voltar
+            </button>
+            <button class="btn btn-success" [disabled]="!form.valid" (click)="salvar()">
+              Salvar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

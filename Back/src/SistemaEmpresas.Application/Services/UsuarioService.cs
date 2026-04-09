@@ -56,4 +56,38 @@ public class UsuarioService : IUsuarioService
 
         return _mapper.Map<UsuarioResponseDto>(usuario);
     }
+
+    public async Task<UsuarioResponseDto?> UpdateAsync(Guid id, UsuarioRequestDto dto)
+    {
+        var usuario = await _usuarioRepository.GetByIdForUpdateAsync(id);
+        if (usuario == null) return null;
+
+        if(usuario.Email != dto.Email)
+        {
+            var usuarioexistente = await _usuarioRepository.GetByEmailAsync(dto.Email);
+            if (usuarioexistente != null)
+                throw new BusinessException("Ja existe um usuario com este e-mail.");
+        }
+
+        usuario.Nome = dto.Nome;
+        usuario.Email = dto.Email;
+        usuario.SenhaHash = PasswordHasher.Hash(dto.Senha);
+        usuario.Ativo = true;
+
+        var sucess = await _usuarioRepository.SaveChangesAsync();
+        if (!sucess)
+            throw new BusinessException("Ocorreu um erro ao atualizar o usuário.");
+
+        return _mapper.Map<UsuarioResponseDto>(usuario);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.GetByIdForUpdateAsync(id);
+        if (usuario == null) return false;
+
+        usuario.Ativo = false;
+
+        return await _usuarioRepository.SaveChangesAsync();
+    }
 }

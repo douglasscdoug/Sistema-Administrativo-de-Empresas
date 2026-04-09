@@ -30,6 +30,12 @@ export const routes: Routes = [
                         .then(m => m.EMPRESA_ROUTES)
             },
             {
+                path: 'usuarios',
+                loadChildren: () =>
+                    import('./features/usuario/usuario.routes')
+                        .then(m => m.USUARIO_ROUTES)
+            },
+            {
                 path: 'dashboard',
                 loadChildren: () =>
                     import('./features/dashboard/dashboard.routes')

@@ -15,10 +15,12 @@ public class UsuarioRepository : GeralRepository<Usuario>
     {
         return await Context.Usuarios
             .AsNoTracking()
+            .Where(u => u.Ativo)
             .OrderBy(u => u.Nome)
             .ToArrayAsync();
     }
 
+    //Para Leitura
     public async Task<Usuario?> GetByIdAsync(Guid id)
     {
         return await Context.Usuarios
@@ -26,7 +28,13 @@ public class UsuarioRepository : GeralRepository<Usuario>
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    
+    //Para Update
+    public async Task<Usuario?> GetByIdForUpdateAsync(Guid id)
+    {
+        return await Context.Usuarios
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
     public async Task<Usuario?> GetByEmailAsync(string email)
     {
         return await Context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
