@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -20,24 +21,24 @@ export class LoginComponent {
   private toaster = inject(ToastrService);
   private spinner = inject(NgxSpinnerService);
 
-  public get f(): any{
+  public get f(): any {
     return this.form.controls;
   };
-  
+
   form: FormGroup = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     senha: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  onSubmit() { 
+  onSubmit() {
     if (this.form.invalid) return;
     this.spinner.show();
-    this.authService.login(this.form.value).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.spinner.hide();
-        this.toaster.error('Falha no login. Verifique suas credenciais e tente novamente.', 'Erro');
-      }
-    }).add(() => this.spinner.hide());
+    this.authService.login(this.form.value)
+      .pipe(
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe({
+        next: () => this.router.navigate(['/dashboard'])
+      });
   }
 }

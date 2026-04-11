@@ -1,3 +1,4 @@
+<h4>{{this.isEditMode ? 'Editar' : 'Adicionar'}} empresa</h4>
 <div class="row">
   <div class="col-md-12">
     <div class="card rounded shadow-sm">
@@ -28,6 +29,7 @@
                 formControlName="cnpj"
                 placeholder="Insira o CNPJ da Empresa"
                 [ngClass]="{ 'is-invalid': isInvalid('cnpj') }"
+                mask="00.000.000/0000-00"
               />
               @if (f.cnpj.errors?.required) {
                 <div class="invalid-feedback">Campo obrigatório</div>
@@ -125,6 +127,7 @@
                   formControlName="cep"
                   placeholder="Insira o CEP"
                   [ngClass]="{ 'is-invalid': isInvalid('endereco.cep') }"
+                  mask="00000-000"
                 />
                 @if (form.get('endereco.cep')?.errors?.['required']) {
                   <div class="invalid-feedback">Campo obrigatório</div>
@@ -173,9 +176,14 @@
                   formControlName="telefone"
                   placeholder="Insira o Telefone do contato"
                   [ngClass]="{ 'is-invalid': isInvalid('contato.telefone') }"
+                  mask="(00) 00000-0000||(00) 0000-0000"
+                  [dropSpecialCharacters]="true"
                 />
                 @if (form.get('contato.telefone')?.errors?.['required']) {
                   <div class="invalid-feedback">Campo obrigatório</div>
+                }
+                @if(form.get('contato.telefone')?.invalid){
+                  <div class="invalid-feedback">Telefone inválido</div>
                 }
               </div>
             </div>
@@ -185,7 +193,7 @@
           <div class="d-flex">
             <button
               class="btn btn-outline-secondary me-auto border"
-              (click)="resetForm()"
+              (click)="voltar()"
             >
               Cancelar Alteração
             </button>

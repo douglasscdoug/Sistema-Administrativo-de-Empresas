@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-usuario-detalhe',
@@ -23,7 +24,7 @@ export class UsuarioDetalheComponent implements OnInit {
   public usuarioId?: string | null = null;
   public isEditMode: boolean = !!this.usuarioId;
 
-  public get f(): any{
+  public get f(): any {
     return this.form.controls;
   };
 
@@ -44,7 +45,7 @@ export class UsuarioDetalheComponent implements OnInit {
     });
   }
 
-  public load(id: string): void{
+  public load(id: string): void {
     this.usuarioService.getById(id).subscribe((res) => {
       this.form.patchValue(res);
     })
@@ -68,17 +69,20 @@ export class UsuarioDetalheComponent implements OnInit {
     const request = this.isEditMode
       ? this.usuarioService.update(this.usuarioId!, data)
       : this.usuarioService.create(data);
-    
-    request.subscribe({
-      next: () => {
-        this.toaster.success(`Usuário ${this.isEditMode ? 'Atualizado' : 'Adicionado'} com sucesso`, 'Sucesso');
-        this.router.navigate(['/usuarios']);
-      },
-      error: (err) => this.toaster.error(err.error.Message, 'Erro')
-    }).add(() => this.spinner.hide());
+
+    request
+      .pipe(
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe({
+        next: () => {
+          this.toaster.success(`Usuário ${this.isEditMode ? 'Atualizado' : 'Adicionado'} com sucesso`, 'Sucesso');
+          this.router.navigate(['/usuarios']);
+        }
+      });
   }
 
-  public voltar(): void{
+  public voltar(): void {
     this.router.navigate(['/usuarios']);
   }
 }

@@ -7,6 +7,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { provideNgxMask } from 'ngx-mask';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,11 +16,12 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([errorInterceptor, authInterceptor])
     ),
     provideToastr(),
     importProvidersFrom([
       ModalModule.forRoot()
-    ])
+    ]),
+    provideNgxMask()
   ]
 };

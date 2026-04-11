@@ -35,7 +35,7 @@
         <tr>
           <td>{{ u.nome }}</td>
           <td>{{ u.email }}</td>
-          <td>{{ u.dataCriacao}}</td>
+          <td>{{ u.dataCriacao | dateFormat }}</td>
           <td>
             <button class="btn btn-sm btn-primary me-2" (click)="usuarioDetalhe(u.id)">
               Editar

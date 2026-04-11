@@ -5,14 +5,16 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
+import { DateFormatPipe } from "../../../../shared/pipes/date-format-pipe";
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-usuario-list',
-  imports: [RouterLink],
+  imports: [RouterLink, DateFormatPipe],
   templateUrl: './usuario-list.component.html',
   styleUrl: './usuario-list.component.scss',
 })
-export class UsuarioListComponent implements OnInit{
+export class UsuarioListComponent implements OnInit {
   private usuarioService = inject(UsuarioService);
   private spinner = inject(NgxSpinnerService);
   private cdr = inject(ChangeDetectorRef);
@@ -28,12 +30,16 @@ export class UsuarioListComponent implements OnInit{
     this.load();
   }
 
-  public load(): void { 
+  public load(): void {
     this.spinner.show();
-    this.usuarioService.getAll().subscribe((usuarios) => {
-      this.usuarios = usuarios;
-      this.cdr.detectChanges();
-    }).add(() => this.spinner.hide());
+    this.usuarioService.getAll()
+      .pipe(
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe((usuarios) => {
+        this.usuarios = usuarios;
+        this.cdr.detectChanges();
+      });
   }
 
   public usuarioDetalhe(id: string): void {
@@ -41,27 +47,28 @@ export class UsuarioListComponent implements OnInit{
   }
 
   public openModal(event: any, template: TemplateRef<void>, usuarioId: string): void {
-      event.stopPropagation();
-      this.usuarioId = usuarioId;
-      this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
-    }
+    event.stopPropagation();
+    this.usuarioId = usuarioId;
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+  }
 
-  public confirm(): void{
+  public confirm(): void {
     this.modalRef?.hide();
     this.spinner.show();
 
-    this.usuarioService.delete(this.usuarioId).subscribe({
-      next: () => {
-        this.toaster.success('Usuário deletado com sucesso!', 'Sucesso');
-        this.load();
-      },
-      error: () => {
-        this.toaster.error('Erro ao deletar usuário!', 'Erro');
-      }
-    }).add(() => this.spinner.hide());
+    this.usuarioService.delete(this.usuarioId)
+      .pipe(
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe({
+        next: () => {
+          this.toaster.success('Usuário deletado com sucesso!', 'Sucesso');
+          this.load();
+        }
+      });
   }
 
-  public declined(): void{
+  public declined(): void {
     this.modalRef?.hide();
   }
 }

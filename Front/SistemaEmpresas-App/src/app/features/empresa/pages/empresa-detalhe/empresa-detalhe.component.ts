@@ -1,16 +1,19 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Empresa } from '../../models/empresa';
 import { EmpresaService } from '../../services/empresa.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, KeyValuePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { finalize } from 'rxjs';
+import { NgxMaskDirective } from 'ngx-mask';
+import { telefoneValidator } from '../../../../shared/validators/telefone.validator';
 
 
 @Component({
   selector: 'app-empresa-detalhe',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective, ],
   templateUrl: './empresa-detalhe.component.html',
   styleUrl: './empresa-detalhe.component.scss',
 })
@@ -26,15 +29,15 @@ export class EmpresaDetalheComponent implements OnInit {
   public empresa = {} as Empresa;
   public isEditMode: boolean = !!this.empresaId;
 
-  public get f(): any{
+  public get f(): any {
     return this.form.controls;
   };
 
-  public get contato(): any{
+  public get contato(): any {
     return this.form.get('contato') as FormGroup;
   };
 
-  public get endereco(): any{
+  public get endereco(): any {
     return this.form.get('endereco') as FormGroup;
   };
 
@@ -56,8 +59,8 @@ export class EmpresaDetalheComponent implements OnInit {
     contato: this.fb.nonNullable.group({
       id: [''],
       nome: ['', Validators.required],
-      email: ['',[Validators.required, Validators.email]],
-      telefone: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      telefone: ['', [Validators.required, telefoneValidator]]
     })
   });
 
@@ -66,9 +69,13 @@ export class EmpresaDetalheComponent implements OnInit {
       this.empresaId = params.get('id');
       this.isEditMode = !!this.empresaId;
 
-      if(this.isEditMode)
+      if (this.isEditMode)
         this.load(this.empresaId!);
-    })
+    });
+  }
+
+  public somenteNumeros(valor: string): string{
+    return (valor || '').replace(/\D/g, '');
   }
 
   public load(id: string): void {
@@ -92,24 +99,30 @@ export class EmpresaDetalheComponent implements OnInit {
 
     const data = {
       ...this.form.value,
-      ativo: true
+      ativo: true,
+      contato: {
+        ...this.form.value.contato,
+        telefone: this.somenteNumeros(this.form.value.contato?.telefone)
+      }
     };
 
     const request = this.isEditMode
       ? this.empresaService.update(this.empresaId!, data)
       : this.empresaService.create(data);
 
-    request.subscribe({
-      next: () => {
-        this.toaster.success(`Empresa ${this.isEditMode ? 'atualizada' : 'criada'} com sucesso!`, 'Sucesso');
-        this.router.navigate(['/empresas']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.toaster.error('Ocorreu um erro ao salvar a empresa.', 'Erro');
-      }
-    }).add(() => this.spinner.hide());
+    request
+      .pipe(
+        finalize(() => this.spinner.hide())
+      )
+      .subscribe({
+        next: () => {
+          this.toaster.success(`Empresa ${this.isEditMode ? 'atualizada' : 'criada'} com sucesso!`, 'Sucesso');
+          this.router.navigate(['/empresas']);
+        }
+      });
 
   }
-  public resetForm(): void { }
+  public voltar(): void {
+    this.router.navigate(['/usuarios']);
+  }
 }
