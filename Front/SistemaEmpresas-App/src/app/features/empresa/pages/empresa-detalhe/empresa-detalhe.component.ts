@@ -9,6 +9,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
 import { telefoneValidator } from '../../../../shared/validators/telefone.validator';
+import { FormErrorService } from '../../../../core/services/form-error.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class EmpresaDetalheComponent implements OnInit {
   private toaster = inject(ToastrService);
   private router = inject(Router);
   private spinner = inject(NgxSpinnerService);
+  private formErrorService = inject(FormErrorService)
 
   public empresaId?: string | null = null;
   public empresa = {} as Empresa;
@@ -53,7 +55,7 @@ export class EmpresaDetalheComponent implements OnInit {
       bairro: ['', Validators.required],
       cidade: ['', Validators.required],
       estado: ['', Validators.required],
-      cep: ['', Validators.required]
+      cep: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]]
     }),
 
     contato: this.fb.nonNullable.group({
@@ -118,7 +120,8 @@ export class EmpresaDetalheComponent implements OnInit {
         next: () => {
           this.toaster.success(`Empresa ${this.isEditMode ? 'atualizada' : 'criada'} com sucesso!`, 'Sucesso');
           this.router.navigate(['/empresas']);
-        }
+        },
+        error: (err) => this.formErrorService.aplicarErros(this.form, err)
       });
 
   }

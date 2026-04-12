@@ -2,7 +2,11 @@ namespace SistemaEmpresas.Application.Exceptions;
 
 public class BusinessException : Exception
 {
-    public BusinessException(string message) : base(message)
+    public string Field { get; }
+
+    public BusinessException(string field, string message)
+        : base(message)
     {
+        Field = field;
     }
 }

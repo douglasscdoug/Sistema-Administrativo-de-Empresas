@@ -1,6 +1,5 @@
 <div class="vh-100 d-flex justify-content-center alignitems-center bg-light">
-  <div class="card shadow rounded p-5 my-5" style="width: 450px;">
-
+  <div class="card shadow rounded p-5 my-5" style="width: 450px">
     <!-- Logo / Home  -->
     <div class="text-center mb-4">
       <h3 class="fw-bold">Sistema Empresas</h3>
@@ -9,18 +8,26 @@
 
     <!-- Form -->
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-
       <div class="mb-3">
         <label>Email:</label>
         <input
           type="email"
           class="form-control"
           formControlName="email"
-          [ngClass]="{'is-invalid': f.email.errors && f.email.touched}"
+          [ngClass]="{ 'is-invalid': f.email.errors && f.email.touched }"
           placeholder="Insira seu E-mail"
-          >
-        @if(f.email.errors?.required){ <div class="invalid-feedback">Campo obrigatório</div>}
-        @if(f.email.errors?.email){ <div class="invalid-feedback">E-mail inválido</div>}
+        />
+        @if (f.email.errors?.required) {
+          <div class="invalid-feedback">Campo obrigatório</div>
+        }
+        @if (f.email.errors?.email) {
+          <div class="invalid-feedback">E-mail inválido</div>
+        }
+        @if (f.email.errors?.server) {
+          <div class="invalid-feedback">
+            {{ f.email.errors['server'] }}
+          </div>
+        }
       </div>
 
       <div class="mb-3">
@@ -29,11 +36,20 @@
           type="password"
           class="form-control"
           formControlName="senha"
-          [ngClass]="{'is-invalid': f.senha.errors && f.senha.touched}"
+          [ngClass]="{ 'is-invalid': f.senha.errors && f.senha.touched }"
           placeholder="Insira sua Senha"
-          >
-        @if(f.senha.errors?.required){ <div class="invalid-feedback">Campo obrigatório</div>}
-        @if(f.senha.errors?.minlength){ <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres</div>}
+        />
+        @if (f.senha.errors?.required) {
+          <div class="invalid-feedback">Campo obrigatório</div>
+        }
+        @if (f.senha.errors?.minlength) {
+          <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres</div>
+        }
+        @if (f.senha.errors?.server) {
+          <div class="invalid-feedback">
+            {{ f.senha.errors['server'] }}
+          </div>
+        }
       </div>
 
       <button type="submit" class="btn btn-primary w-100" [disabled]="form.invalid">Entrar</button>

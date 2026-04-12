@@ -9,12 +9,13 @@
     <Folder Include="Auth\Interfaces\" />
     <Folder Include="Auth\Services\" />
     <Folder Include="Auth\Settings\" />
+    <Folder Include="Common\" />
+    <Folder Include="Common\Utils\" />
     <Folder Include="Exceptions/" />
     <Folder Include="Helpers/" />
     <Folder Include="Interfaces/" />
     <Folder Include="Security\" />
     <Folder Include="Services/" />
-    <Folder Include="Validators/" />
   </ItemGroup>
 
   <ItemGroup>

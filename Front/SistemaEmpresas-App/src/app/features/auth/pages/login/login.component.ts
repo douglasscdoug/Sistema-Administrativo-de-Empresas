@@ -2,10 +2,10 @@ import { Component, inject, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { FormErrorService } from '../../../../core/services/form-error.service';
 
 @Component({
   selector: 'app-login',
@@ -18,8 +18,8 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private toaster = inject(ToastrService);
   private spinner = inject(NgxSpinnerService);
+  private formErrorService = inject(FormErrorService);
 
   public get f(): any {
     return this.form.controls;
@@ -38,7 +38,8 @@ export class LoginComponent {
         finalize(() => this.spinner.hide())
       )
       .subscribe({
-        next: () => this.router.navigate(['/dashboard'])
+        next: () => this.router.navigate(['/dashboard']),
+        error: (err) => this.formErrorService.aplicarErros(this.form, err)
       });
   }
 }

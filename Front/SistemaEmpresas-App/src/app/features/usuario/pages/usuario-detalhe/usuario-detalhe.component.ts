@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
+import { FormErrorService } from '../../../../core/services/form-error.service';
 
 @Component({
   selector: 'app-usuario-detalhe',
@@ -20,6 +21,7 @@ export class UsuarioDetalheComponent implements OnInit {
   private router = inject(Router);
   private toaster = inject(ToastrService);
   private actvatedRoute = inject(ActivatedRoute);
+  private formErrorService = inject(FormErrorService);
 
   public usuarioId?: string | null = null;
   public isEditMode: boolean = !!this.usuarioId;
@@ -78,7 +80,8 @@ export class UsuarioDetalheComponent implements OnInit {
         next: () => {
           this.toaster.success(`Usuário ${this.isEditMode ? 'Atualizado' : 'Adicionado'} com sucesso`, 'Sucesso');
           this.router.navigate(['/usuarios']);
-        }
+        },
+        error: (err) => this.formErrorService.aplicarErros(this.form, err)
       });
   }
 

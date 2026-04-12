@@ -21,12 +21,12 @@ public class AuthService : IAuthService
         var usuario = await _usuarioRepository.GetByEmailAsync(request.Email);
 
         if (usuario == null || !usuario.Ativo)
-            throw new BusinessException("Usuário ou senha inválidos.");
+            throw new BusinessException("Email", "Não existe usuário com este e-mail.");
 
         var senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash);
 
         if (!senhaValida)
-            throw new BusinessException("Usuário ou senha inválidos.");
+            throw new BusinessException("Senha", "Senha incorreta.");
 
         var token = _tokenService.GerarToken(usuario);
 

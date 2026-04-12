@@ -1,7 +1,6 @@
 using System.Net;
-using System.Reflection.Metadata;
 using System.Text.Json;
-using SistemaEmpresas.API.Models;
+using Microsoft.AspNetCore.Mvc;
 using SistemaEmpresas.Application.Exceptions;
 
 namespace SistemaEmpresas.API.Middlewares;
@@ -25,7 +24,7 @@ public class ExceptionMiddleware
         }
         catch (BusinessException ex)
         {
-            await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
+            await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message, ex);
         }
         catch (Exception ex)
         {
@@ -43,14 +42,29 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new ErrorResponse
+        var problem = new ValidationProblemDetails
         {
-            StatusCode = context.Response.StatusCode,
-            Message = message,
-            Details = _env.IsDevelopment() ? exception?.Message : null
+            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+            Title = "One or more validation errors occurred.",
+            Status = (int)statusCode
         };
 
-        var json = JsonSerializer.Serialize(response);
+        if (exception is BusinessException businessEx)
+        {
+            problem.Errors.Add(businessEx.Field, new[] { businessEx.Message });
+        }
+        else
+        {
+            problem.Errors.Add("Erro", new[] { message });
+        }
+
+        // (opcional) detalhes em dev
+        if (_env.IsDevelopment() && exception != null)
+        {
+            problem.Extensions["trace"] = exception.Message;
+        }
+
+        var json = JsonSerializer.Serialize(problem);
         await context.Response.WriteAsync(json);
     }
 }

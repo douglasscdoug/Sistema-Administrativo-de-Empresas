@@ -37,6 +37,9 @@
               @if (f.cnpj.errors?.pattern) {
                 <div class="invalid-feedback">CNPJ inválido</div>
               }
+              @if (f.cnpj.errors?.server) {
+                <div class="invalid-feedback">{{ f.cnpj.errors['server'] }}</div>
+              }
             </div>
           </div>
           <hr />
@@ -131,6 +134,9 @@
                 />
                 @if (form.get('endereco.cep')?.errors?.['required']) {
                   <div class="invalid-feedback">Campo obrigatório</div>
+                }
+                @if (form.get('endereco.cep')?.errors?.['pattern']) {
+                  <div class="invalid-feedback">Deve conter 8 dígitos</div>
                 }
               </div>
             </div>

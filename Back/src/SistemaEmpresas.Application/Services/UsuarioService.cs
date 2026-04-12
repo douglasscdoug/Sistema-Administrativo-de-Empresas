@@ -37,7 +37,7 @@ public class UsuarioService : IUsuarioService
     {
         var usuarioexistente = await _usuarioRepository.GetByEmailAsync(dto.Email);
         if (usuarioexistente != null)
-            throw new BusinessException("Já existe um usuário com este e-mail.");
+            throw new BusinessException("Email", "Já existe um usuário com este e-mail.");
 
         var usuario = new Usuario
         {
@@ -52,7 +52,7 @@ public class UsuarioService : IUsuarioService
         var sucess = await _usuarioRepository.SaveChangesAsync();
 
         if (!sucess)
-            throw new BusinessException("Ocorreu um erro ao salvar o usuário.");
+            throw new BusinessException("Erro", "Ocorreu um erro ao salvar o usuário.");
 
         return _mapper.Map<UsuarioResponseDto>(usuario);
     }
@@ -66,7 +66,7 @@ public class UsuarioService : IUsuarioService
         {
             var usuarioexistente = await _usuarioRepository.GetByEmailAsync(dto.Email);
             if (usuarioexistente != null)
-                throw new BusinessException("Ja existe um usuario com este e-mail.");
+                throw new BusinessException("Email", "Ja existe um usuario com este e-mail.");
         }
 
         usuario.Nome = dto.Nome;
@@ -76,7 +76,7 @@ public class UsuarioService : IUsuarioService
 
         var sucess = await _usuarioRepository.SaveChangesAsync();
         if (!sucess)
-            throw new BusinessException("Ocorreu um erro ao atualizar o usuário.");
+            throw new BusinessException("Erro", "Ocorreu um erro ao atualizar o usuário.");
 
         return _mapper.Map<UsuarioResponseDto>(usuario);
     }

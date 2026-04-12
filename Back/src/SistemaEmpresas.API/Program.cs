@@ -48,7 +48,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 // 5. FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<EmpresaRequestDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<EmpresaDtoValidator>();
 
 // 6. Autenticação
 builder.Services.AddAuthentication(options =>
