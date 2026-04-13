@@ -1,7 +1,10 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using SistemaEmpresas.Application.Common.Utils;
 using SistemaEmpresas.Application.DTOs;
 using SistemaEmpresas.Application.Exceptions;
+using SistemaEmpresas.Application.Filters;
 using SistemaEmpresas.Application.Interfaces;
 using SistemaEmpresas.Domain.Entities;
 using SistemaEmpresas.Infrastructure.Repositories;
@@ -19,10 +22,50 @@ public class EmpresaService : IEmpresaService
         _empresaRepository = empresaRepository;
     }
 
-    public async Task<EmpresaResponseDto[]> GetAllAsync()
+    public async Task<PagedResult<EmpresaResponseDto>> Filtrar(EmpresaFiltroDto filtro)
     {
-        var empresas = await _empresaRepository.GetAllAsync();
-        return _mapper.Map<EmpresaResponseDto[]>(empresas);
+        var query = _empresaRepository.Query();
+
+        //Busca global
+        if (!string.IsNullOrWhiteSpace(filtro.Search))
+        {
+            query = query.Where(e =>
+                e.RazaoSocial.Contains(filtro.Search) ||
+                e.Cnpj.Contains(filtro.Search));
+        }
+
+        //filtros específicos
+        if (!string.IsNullOrWhiteSpace(filtro.RazaoSocial))
+        {
+            var termo = filtro.RazaoSocial.Trim().ToLower();
+
+            query = query.Where(e => e.RazaoSocial.ToLower().Contains(termo));
+        }
+
+        if (!string.IsNullOrWhiteSpace(filtro.Cnpj))
+            query = query.Where(e => e.Cnpj.Contains(filtro.Cnpj));
+
+        if (filtro.Ativo.HasValue)
+            query = query.Where(e => e.Ativo == filtro.Ativo.Value);
+
+        var total = await query.CountAsync();
+
+        query = ApplyOrdering(query, filtro);
+
+        //Paginação
+        var data = await query
+            .Skip((filtro.Page - 1) * filtro.PageSize)
+            .Take(filtro.PageSize)
+            .ProjectTo<EmpresaResponseDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return new PagedResult<EmpresaResponseDto>
+        {
+            Data = data,
+            Total = total,
+            Page = filtro.Page,
+            PageSize = filtro.PageSize
+        };
     }
 
     public async Task<EmpresaResponseDto?> GetByIdAsync(Guid id)
@@ -110,5 +153,24 @@ public class EmpresaService : IEmpresaService
         empresa.Ativo = false;
 
         return await _empresaRepository.SaveChangesAsync();
+    }
+
+    private IQueryable<Empresa> ApplyOrdering(IQueryable<Empresa> query, PagedRequest filtro)
+    {
+        if (string.IsNullOrWhiteSpace(filtro.OrderBy))
+            return query.OrderBy(e => e.Id);
+
+        return filtro.OrderBy.ToLower() switch
+        {
+            "razaosocial" => filtro.Desc
+                ? query.OrderByDescending(e => e.RazaoSocial)
+                : query.OrderBy(e => e.RazaoSocial),
+
+            "cnpj" => filtro.Desc
+                ? query.OrderByDescending(e => e.Cnpj)
+                : query.OrderBy(e => e.Cnpj),
+
+            _ => query.OrderBy(e => e.Id)
+        };
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SistemaEmpresas.Application.DTOs;
+using SistemaEmpresas.Application.Filters;
 using SistemaEmpresas.Application.Interfaces;
 
 namespace SistemaEmpresas.API.Controllers
@@ -19,10 +19,10 @@ namespace SistemaEmpresas.API.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] EmpresaFiltroDto filtro)
         {
-            var empresas = await _empresaService.GetAllAsync();
-            return Ok(empresas);
+            var result = await _empresaService.Filtrar(filtro);
+            return Ok(result);
         }
 
         [Authorize]

@@ -11,15 +11,6 @@ public class UsuarioRepository : GeralRepository<Usuario>
     {
     }
 
-    public async Task<Usuario[]> GetAllAsync()
-    {
-        return await Context.Usuarios
-            .AsNoTracking()
-            .Where(u => u.Ativo)
-            .OrderBy(u => u.Nome)
-            .ToArrayAsync();
-    }
-
     //Para Leitura
     public async Task<Usuario?> GetByIdAsync(Guid id)
     {
@@ -38,5 +29,10 @@ public class UsuarioRepository : GeralRepository<Usuario>
     public async Task<Usuario?> GetByEmailAsync(string email)
     {
         return await Context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    public IQueryable<Usuario> Query()
+    {
+        return Context.Usuarios.AsQueryable();
     }
 }
