@@ -9,6 +9,7 @@ import { provideToastr } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { provideNgxMask } from 'ngx-mask';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +21,8 @@ export const appConfig: ApplicationConfig = {
     ),
     provideToastr(),
     importProvidersFrom([
-      ModalModule.forRoot()
+      ModalModule.forRoot(),
+      PaginationModule.forRoot()
     ]),
     provideNgxMask()
   ]

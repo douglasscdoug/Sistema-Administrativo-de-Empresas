@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario';
 import { API } from '../../../core/config/api.config';
+import { PagedResult } from '../../../shared/models/paged-result';
 
 @Injectable({
   providedIn: 'root',
@@ -10,9 +11,19 @@ import { API } from '../../../core/config/api.config';
 export class UsuarioService {
   private http = inject(HttpClient);
 
-  public getAll(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(API.endpoints.usuario);
-  }
+  public filtrar(filtro: any): Observable<PagedResult<Usuario>> {
+      let params = new HttpParams;
+  
+      Object.keys(filtro).forEach(key => {
+        const value = filtro[key];
+  
+        if (value !== null && value !== '') {
+          params = params.set(key, value);
+        }
+      });
+  
+      return this.http.get<PagedResult<Usuario>>(API.endpoints.usuario, { params });
+    }
 
   public getById(id: string): Observable<Usuario> {
     return this.http.get<Usuario>(`${API.endpoints.usuario}/${id}`);

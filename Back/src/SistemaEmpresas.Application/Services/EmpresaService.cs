@@ -170,6 +170,10 @@ public class EmpresaService : IEmpresaService
                 ? query.OrderByDescending(e => e.Cnpj)
                 : query.OrderBy(e => e.Cnpj),
 
+            "ativo" => filtro.Desc
+                ? query.OrderByDescending(e => e.Ativo)
+                : query.OrderBy(e => e.Ativo),
+
             _ => query.OrderBy(e => e.Id)
         };
     }

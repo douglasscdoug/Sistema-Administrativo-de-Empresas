@@ -151,6 +151,14 @@ public class UsuarioService : IUsuarioService
                 ? query.OrderByDescending(u => u.Email)
                 : query.OrderBy(u => u.Email),
 
+            "datacriacao" => filtro.Desc
+                ? query.OrderByDescending(u => u.DataCriacao)
+                : query.OrderBy(u => u.DataCriacao),
+
+            "ativo" => filtro.Desc
+                ? query.OrderByDescending(u => u.Ativo)
+                : query.OrderBy(u => u.Ativo),
+
             _ => query.OrderBy(u => u.Id)
         };
     }
