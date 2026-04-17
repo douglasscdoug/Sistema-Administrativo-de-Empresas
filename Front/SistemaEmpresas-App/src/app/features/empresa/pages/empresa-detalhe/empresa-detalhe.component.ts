@@ -10,6 +10,7 @@ import { finalize } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
 import { telefoneValidator } from '../../../../shared/validators/telefone.validator';
 import { FormErrorService } from '../../../../core/services/form-error.service';
+import { cnpjValidator } from '../../../../shared/validators/cnpj.validator';
 
 
 @Component({
@@ -45,7 +46,7 @@ export class EmpresaDetalheComponent implements OnInit {
 
   public form: FormGroup = this.fb.nonNullable.group({
     razaoSocial: ['', Validators.required],
-    cnpj: ['', [Validators.required, Validators.pattern(/^\d{14}$/)]],
+    cnpj: ['', [Validators.required, cnpjValidator]],
 
     endereco: this.fb.nonNullable.group({
       id: [''],

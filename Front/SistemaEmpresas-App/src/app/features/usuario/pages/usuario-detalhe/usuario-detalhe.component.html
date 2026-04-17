@@ -1,4 +1,4 @@
-<h4>{{this.isEditMode ? 'Editar' : 'Adicionar'}} usuário</h4>
+<h4>{{ this.isEditMode ? 'Editar' : 'Adicionar' }} usuário</h4>
 <div class="row">
   <div class="col-md-12">
     <div class="card rounded shadow-sm">
@@ -48,11 +48,39 @@
                 placeholder="Insira a senha do usuário"
                 [ngClass]="{ 'is-invalid': isInvalid('senha') }"
               />
+              @if (senhaValue) {
+                <div class="progress mt-2" style="height: 6px">
+                  <div
+                    class="progress-bar"
+                    [class]="classeSenha"
+                    [style.width.%]="(forcaSenha / 4) * 100"
+                  ></div>
+                </div>
+
+                <small
+                  [ngClass]="{
+                    'text-danger': forcaSenha <= 1,
+                    'text-warning': forcaSenha > 1 && forcaSenha <= 3,
+                    'text-success': forcaSenha > 3,
+                  }"
+                >
+                  Força da senha: {{ labelSenha }}
+                </small>
+              }
               @if (f.senha.errors?.required) {
                 <div class="invalid-feedback">Campo obrigatório</div>
               }
-              @if (f.senha.errors?.minlength) {
-                <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres</div>
+              @if (f.senha.errors?.minLength) {
+                <div class="invalid-feedback">A senha deve ter pelo menos 8 caracteres.</div>
+              }
+              @if (f.senha.errors?.letra) {
+                <div class="invalid-feedback">A senha deve conter pelo menos uma letra.</div>
+              }
+              @if (f.senha.errors?.numero) {
+                <div class="invalid-feedback">A senha deve conter pelo menos um número.</div>
+              }
+              @if (f.senha.errors?.server) {
+                <div class="invalid-feedback">{{ f.senha.errors['server'] }}</div>
               }
             </div>
           </div>

@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { FormErrorService } from '../../../../core/services/form-error.service';
+import { senhaValidator } from '../../../../shared/validators/senha.validator';
 
 @Component({
   selector: 'app-usuario-detalhe',
@@ -30,10 +31,40 @@ export class UsuarioDetalheComponent implements OnInit {
     return this.form.controls;
   };
 
+  public get senhaValue(): string {
+    return this.form.get('senha')?.value || '';
+  }
+
+  public get forcaSenha(): number {
+    const senha = this.senhaValue;
+    let score = 0;
+
+    if (!senha) return 0;
+
+    if (senha.length >= 8) score++;
+    if (/[A-Za-z]/.test(senha)) score++;
+    if (/\d/.test(senha)) score++;
+    if (/[^A-Za-z0-9]/.test(senha)) score++;
+
+    return score;
+  }
+
+  public get labelSenha(): string {
+    if (this.forcaSenha <= 1) return 'Senha fraca';
+    if (this.forcaSenha <= 3) return 'Senha média';
+    return 'Senha forte';
+  }
+
+  public get classeSenha(): string {
+    if (this.forcaSenha <= 1) return 'bg-danger';
+    if (this.forcaSenha <= 3) return 'bg-warning';
+    return 'bg-success';
+  }
+
   public form: FormGroup = this.fb.nonNullable.group({
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    senha: ['', [Validators.required, Validators.minLength(6)]]
+    senha: ['', [Validators.required, senhaValidator]]
   });
 
   ngOnInit(): void {

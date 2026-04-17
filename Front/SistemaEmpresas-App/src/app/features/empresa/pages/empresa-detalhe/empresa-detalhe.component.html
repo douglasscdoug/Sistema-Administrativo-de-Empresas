@@ -34,7 +34,7 @@
               @if (f.cnpj.errors?.required) {
                 <div class="invalid-feedback">Campo obrigatório</div>
               }
-              @if (f.cnpj.errors?.pattern) {
+              @if (f.cnpj.errors?.cnpjInvalido) {
                 <div class="invalid-feedback">CNPJ inválido</div>
               }
               @if (f.cnpj.errors?.server) {
