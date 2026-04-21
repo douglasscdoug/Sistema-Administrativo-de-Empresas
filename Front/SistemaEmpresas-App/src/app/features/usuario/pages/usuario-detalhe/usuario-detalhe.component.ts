@@ -8,10 +8,12 @@ import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
 import { FormErrorService } from '../../../../core/services/form-error.service';
 import { senhaValidator } from '../../../../shared/validators/senha.validator';
+import { AuthService } from '../../../../core/services/auth.service';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-usuario-detalhe',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HasRoleDirective],
   templateUrl: './usuario-detalhe.component.html',
   styleUrl: './usuario-detalhe.component.scss',
 })
@@ -23,9 +25,11 @@ export class UsuarioDetalheComponent implements OnInit {
   private toaster = inject(ToastrService);
   private actvatedRoute = inject(ActivatedRoute);
   private formErrorService = inject(FormErrorService);
+  private authService = inject(AuthService);
 
   public usuarioId?: string | null = null;
   public isEditMode: boolean = !!this.usuarioId;
+  public isPerfil = false;
 
   public get f(): any {
     return this.form.controls;
@@ -64,7 +68,8 @@ export class UsuarioDetalheComponent implements OnInit {
   public form: FormGroup = this.fb.nonNullable.group({
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    senha: ['', [Validators.required, senhaValidator]]
+    senha: ['', [Validators.required, senhaValidator]],
+    role: ['', [Validators.required]]
   });
 
   ngOnInit(): void {
@@ -72,8 +77,12 @@ export class UsuarioDetalheComponent implements OnInit {
       this.usuarioId = params.get('id');
       this.isEditMode = !!this.usuarioId;
 
+      this.isPerfil = this.actvatedRoute.snapshot.data['perfil'] === true;
+
       if (this.isEditMode) {
         this.load(this.usuarioId!);
+      } else if (this.isPerfil) {
+        this.loadPerfil();
       }
     });
   }
@@ -99,9 +108,17 @@ export class UsuarioDetalheComponent implements OnInit {
 
     const data = this.form.value
 
-    const request = this.isEditMode
-      ? this.usuarioService.update(this.usuarioId!, data)
-      : this.usuarioService.create(data);
+    let request;
+
+    if (this.isPerfil) {
+      const user = this.authService.user;
+      if (!user) return;
+      request = this.usuarioService.update(user.id, data);
+    } else if (this.isEditMode) {
+      request = this.usuarioService.update(this.usuarioId!, data);
+    } else {
+      request = this.usuarioService.create(data);
+    }
 
     request
       .pipe(
@@ -109,7 +126,10 @@ export class UsuarioDetalheComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.toaster.success(`Usuário ${this.isEditMode ? 'Atualizado' : 'Adicionado'} com sucesso`, 'Sucesso');
+          this.toaster.success(this.isEditMode ? 'Usuário alterado com sucesso.' : this.isPerfil ? 'Perfil alterado com sucesso.' : 'Usuário adicionado com sucesso.', 'Sucesso');
+          if (this.isEditMode) {
+            this.router.navigate(['/dashboard'])
+          }
           this.router.navigate(['/usuarios']);
         },
         error: (err) => this.formErrorService.aplicarErros(this.form, err)
@@ -118,5 +138,17 @@ export class UsuarioDetalheComponent implements OnInit {
 
   public voltar(): void {
     this.router.navigate(['/usuarios']);
+  }
+
+  private loadPerfil(): void {
+    const user = this.authService.user;
+
+    if (user) {
+      this.form.patchValue(user);
+    } else {
+      this.authService.getMe().subscribe(user => {
+        this.form.patchValue(user);
+      });
+    }
   }
 }

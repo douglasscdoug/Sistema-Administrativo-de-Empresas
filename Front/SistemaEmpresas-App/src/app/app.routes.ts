@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { authGuard } from './core/guards/auth.guard';
+import { UsuarioDetalheComponent } from './features/usuario/pages/usuario-detalhe/usuario-detalhe.component';
 
 export const routes: Routes = [
     // rota pública
@@ -45,6 +46,11 @@ export const routes: Routes = [
                 loadChildren: () =>
                     import('./features/usuario/usuario.routes')
                         .then(m => m.USUARIO_ROUTES)
+            },
+            {
+                path: 'perfil',
+                component: UsuarioDetalheComponent,
+                data: {perfil: true}
             },
             {
                 path: 'dashboard',

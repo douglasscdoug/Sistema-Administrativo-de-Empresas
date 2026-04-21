@@ -32,10 +32,21 @@ namespace SistemaEmpresas.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             if (User.GetUserRole() != "Administrador" &&
-                User.GetUserId() != id.ToString()) return Forbid();
+                User.GetUserId() != id) return Forbid();
 
             var usuario = await _usuarioService.GetByIdAsync(id);
             if (usuario == null) return NotFound();
+
+            return Ok(usuario);
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> ObterUsuarioLogado()
+        {
+            var usuarioId = User.GetUserId();
+
+            var usuario = await _usuarioService.GetByIdAsync(usuarioId);
 
             return Ok(usuario);
         }
@@ -63,7 +74,7 @@ namespace SistemaEmpresas.API.Controllers
             if (usuarioExistente == null) return NotFound();
 
             if (User.GetUserRole() != "Administrador" &&
-                User.GetUserId() != id.ToString()) return Forbid();
+                User.GetUserId() != id) return Forbid();
 
             if(User.GetUserRole() != "Administrador")
             {

@@ -1,3 +1,5 @@
 <h2>Dashboard</h2>
 
-<p>Bem-vindo, usuario!</p>
+@if (user$ | async; as user) {
+  <span> Olá, {{ user.nome }} </span>
+}

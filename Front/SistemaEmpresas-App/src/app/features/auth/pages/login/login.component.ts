@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { FormErrorService } from '../../../../core/services/form-error.service';
 
 @Component({
@@ -35,10 +35,14 @@ export class LoginComponent {
     this.spinner.show();
     this.authService.login(this.form.value)
       .pipe(
+        switchMap(() => this.authService.getMe()),
         finalize(() => this.spinner.hide())
       )
       .subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: (user) => {
+          this.authService.setUser(user);
+          this.router.navigate(['/dashboard']);
+        },
         error: (err) => this.formErrorService.aplicarErros(this.form, err)
       });
   }

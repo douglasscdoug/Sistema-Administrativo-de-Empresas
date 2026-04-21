@@ -1,11 +1,15 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Directive({
   selector: '[hasRole]',
   standalone: true
 })
-export class HasRoleDirective {
+export class HasRoleDirective implements OnDestroy{
+
+  private subscription?: Subscription;
+  private currentRole?: string;
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -13,18 +17,21 @@ export class HasRoleDirective {
     private authService: AuthService
   ) { }
   
-  @Input() set hasRole(role: string | string[]) {
-    const currentRole = this.authService.getRole();
+  @Input() set hasRole(role: string) {
+    this.currentRole = role;
 
-    const roles = Array.isArray(role) ? role : [role];
+    this.subscription?.unsubscribe();
 
-    this.viewContainer.clear();
+    this.subscription = this.authService.user$.subscribe(user => {
+      this.viewContainer.clear();
 
-    if (currentRole && roles.includes(currentRole)) {
-      this.viewContainer.createEmbeddedView(this.templateRef);
-    }
+      if (user?.role === this.currentRole) {
+        this.viewContainer.createEmbeddedView(this.templateRef);
+      }
+    });
+  }
 
-    console.log('ROLE ATUAL:', currentRole);
-    console.log('ROLE ESPERADA:', roles);
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }

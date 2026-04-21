@@ -21,9 +21,11 @@ import { HasRoleDirective } from '../../shared/directives/has-role.directive';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  isCollapsed = true;
-  public authService = inject(AuthService);
   private router = inject(Router);
+  private authService = inject(AuthService);
+  
+  public isCollapsed = true;
+  public user$ = this.authService.user$;
 
   logout() {
     this.authService.logout();

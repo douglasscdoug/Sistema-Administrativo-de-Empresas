@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { API } from '../config/api.config';
 import { tap } from 'rxjs/internal/operators/tap';
 import { jwtDecode } from 'jwt-decode';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Usuario } from '../../features/usuario/models/usuario';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +13,18 @@ export class AuthService {
 
   private http = inject(HttpClient);
   private tokenKey = 'token';
-  
+  private userSubject = new BehaviorSubject<Usuario | null>(null);
+
+  public user$ = this.userSubject.asObservable();
+
+  public get user() {
+    return this.userSubject.value;
+  }
+
+  public setUser(user: Usuario) {
+    this.userSubject.next(user);
+  }
+
   public login(credentials: any) {
     return this.http.post<any>(API.endpoints.auth, credentials).pipe(
       tap(response => {
@@ -35,15 +48,16 @@ export class AuthService {
     return jwtDecode(token);
   }
 
-  public getRole(): string | null {
-    const user = this.getUser();
-    if (!user) return null;
+  public getMe(): Observable<Usuario>{
+    return this.http.get<Usuario>(`${API.endpoints.usuario}/me`);
+  }
 
-    return user['role'] || user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+  public getRole(): string | null {
+    return this.user?.role ?? null;
   }
 
   public isAdmin(): boolean {
-    return this.getRole() === 'Administrador';
+    return this.user?.role === 'Administrador';
   }
 
   public isAuthenticated(): boolean { 
@@ -72,5 +86,11 @@ export class AuthService {
     
     const now = Math.floor(Date.now() / 1000);
     return exp < (now - 60); // Considera o token expirado 1 minuto antes para evitar problemas de sincronização
+  }
+
+  public loadUser() {
+    if (this.isAuthenticated()) {
+      this.getMe().subscribe(user => this.setUser(user));
+    }
   }
 }
