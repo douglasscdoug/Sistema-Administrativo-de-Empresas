@@ -1,0 +1,22 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AcessoNegadoComponent } from './acesso-negado.component';
+
+describe('AcessoNegadoComponent', () => {
+  let component: AcessoNegadoComponent;
+  let fixture: ComponentFixture<AcessoNegadoComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AcessoNegadoComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AcessoNegadoComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

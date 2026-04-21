@@ -90,7 +90,8 @@ public class UsuarioService : IUsuarioService
             Email = dto.Email,
             SenhaHash = PasswordHasher.Hash(dto.Senha),
             Ativo = true,
-            DataCriacao = DateTime.Now
+            DataCriacao = DateTime.Now,
+            Role = dto.Role
         };
 
         await _usuarioRepository.AddAsync(usuario);
@@ -118,6 +119,7 @@ public class UsuarioService : IUsuarioService
         usuario.Email = dto.Email;
         usuario.SenhaHash = PasswordHasher.Hash(dto.Senha);
         usuario.Ativo = true;
+        usuario.Role = dto.Role;
 
         var sucess = await _usuarioRepository.SaveChangesAsync();
         if (!sucess)

@@ -1,4 +1,5 @@
 using System;
+using SistemaEmpresas.Domain.Enums;
 
 namespace SistemaEmpresas.Application.DTOs;
 
@@ -9,4 +10,5 @@ public class UsuarioResponseDto
     public required string Email { get; set; }
     public bool Ativo { get; set; }
     public DateTime DataCriacao { get; set; }
+    public UsuarioRole Role { get; set; }
 }

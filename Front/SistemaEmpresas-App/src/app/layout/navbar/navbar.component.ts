@@ -4,22 +4,25 @@ import { Router, RouterLinkActive, RouterModule } from "@angular/router";
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { AuthService } from '../../core/services/auth.service';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { HasRoleDirective } from '../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [
     RouterLinkActive,
     CommonModule,
     RouterModule,
     BsDropdownModule,
-    CollapseModule
+    CollapseModule,
+    HasRoleDirective
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
   isCollapsed = true;
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private router = inject(Router);
 
   logout() {
@@ -29,5 +32,9 @@ export class NavbarComponent {
 
   toggleMenu(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  teste():any {
+    console.log(this.authService.getRole());
   }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SistemaEmpresas.API.Extensions;
 using SistemaEmpresas.Application.DTOs;
 using SistemaEmpresas.Application.Filters;
 using SistemaEmpresas.Application.Interfaces;
@@ -18,7 +19,7 @@ namespace SistemaEmpresas.API.Controllers
             _usuarioService = usuarioService;
         }
 
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] UsuarioFiltroDto filtro)
         {
@@ -30,13 +31,16 @@ namespace SistemaEmpresas.API.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
+            if (User.GetUserRole() != "Administrador" &&
+                User.GetUserId() != id.ToString()) return Forbid();
+
             var usuario = await _usuarioService.GetByIdAsync(id);
             if (usuario == null) return NotFound();
 
             return Ok(usuario);
         }
 
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UsuarioRequestDto dto)
         {
@@ -55,6 +59,17 @@ namespace SistemaEmpresas.API.Controllers
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UsuarioRequestDto dto)
         {
+            var usuarioExistente = await _usuarioService.GetByIdAsync(id);
+            if (usuarioExistente == null) return NotFound();
+
+            if (User.GetUserRole() != "Administrador" &&
+                User.GetUserId() != id.ToString()) return Forbid();
+
+            if(User.GetUserRole() != "Administrador")
+            {
+                dto.Role = usuarioExistente.Role;
+            }
+                
             if (dto == null) return BadRequest();
 
             var usuario = await _usuarioService.UpdateAsync(id, dto);
@@ -63,7 +78,7 @@ namespace SistemaEmpresas.API.Controllers
             return Ok(usuario);
         }
 
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

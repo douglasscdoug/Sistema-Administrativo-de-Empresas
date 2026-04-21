@@ -1,13 +1,28 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toaster = inject(ToastrService);
+  const router = inject(Router);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+
+      if (error.status === 401) {
+        localStorage.removeItem('token');
+        router.navigate(['/login']);
+        return throwError(() => error);
+      }
+
+      if (error.status === 403) {
+        if (router.url !== '/acesso-negado') {
+          router.navigate(['/acesso-negado']);
+        }
+        return throwError(() => error);
+      }
 
       let mensagem = 'Erro inesperado. Tente novamente.';
 
@@ -27,7 +42,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         }
       }
 
-      toaster.error(mensagem, 'Erro');
+      if (error.status >= 400 && error.status !== 401 && error.status !== 403){
+        toaster.error(mensagem, 'Erro', {timeOut: 5000, progressBar: true});
+      }
 
       return throwError(() => error);
     })

@@ -75,13 +75,19 @@ builder.Services.AddAuthentication(options =>
 });
 
 //7. Authorization
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
+});
 
 //8. Controllers e AutoMapper
 builder.Services.AddAutoMapper(typeof(SistemaEmpresasProfile));
-builder.Services.AddControllers();
-
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

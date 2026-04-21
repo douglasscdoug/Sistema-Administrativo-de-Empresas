@@ -21,6 +21,9 @@
           },
           "@schematics/angular:interceptor": {
             "typeSeparator": "."
+          },
+          "@schematics/angular:directive": {
+            "type": "directive"
           }
         },
         "root": "",

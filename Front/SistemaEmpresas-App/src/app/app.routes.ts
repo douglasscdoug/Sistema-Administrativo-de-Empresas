@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout/layout.component';
 import { authGuard } from './core/guards/auth.guard';
-import { HomeComponent } from './features/dashboard/pages/home/home.component';
 
 export const routes: Routes = [
     // rota pública
@@ -10,6 +9,18 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./features/auth/pages/login/login.component')
                 .then(m => m.LoginComponent)
+    },
+    {
+        path: 'acesso-negado',
+        loadComponent: () =>
+            import('./core/pages/acesso-negado/acesso-negado.component')
+                .then(m => m.AcessoNegadoComponent)
+    },
+    {
+        path: 'not-found',
+        loadComponent: () =>
+            import('./core/pages/not-found/not-found.component')
+                .then(m => m.NotFoundComponent)
     },
 
     // rotas protegidas
@@ -47,6 +58,6 @@ export const routes: Routes = [
     // fallback
     {
         path: '**',
-        redirectTo: 'dashboard'
+        redirectTo: 'not-found'
     }
 ];

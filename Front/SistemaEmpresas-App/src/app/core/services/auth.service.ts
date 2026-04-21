@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API } from '../config/api.config';
 import { tap } from 'rxjs/internal/operators/tap';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -9,24 +10,43 @@ import { tap } from 'rxjs/internal/operators/tap';
 export class AuthService {
 
   private http = inject(HttpClient);
+  private tokenKey = 'token';
   
-  login(credentials: any) {
+  public login(credentials: any) {
     return this.http.post<any>(API.endpoints.auth, credentials).pipe(
       tap(response => {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem(this.tokenKey, response.token);
       })
     );
   }
 
-  logout() { 
-    localStorage.removeItem('token');
+  public logout() { 
+    localStorage.removeItem(this.tokenKey);
   }
 
-  getToken(): string | null { 
-    return localStorage.getItem('token');
+  public getToken(): string | null { 
+    return localStorage.getItem(this.tokenKey);
   }
 
-  isAuthenticated(): boolean { 
+  public getUser(): any {
+    const token = this.getToken();
+    if (!token) return null;
+
+    return jwtDecode(token);
+  }
+
+  public getRole(): string | null {
+    const user = this.getUser();
+    if (!user) return null;
+
+    return user['role'] || user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+  }
+
+  public isAdmin(): boolean {
+    return this.getRole() === 'Administrador';
+  }
+
+  public isAuthenticated(): boolean { 
     const token = this.getToken();
     if (!token) return false;
     
@@ -38,7 +58,7 @@ export class AuthService {
     return true;
   }
 
-  getTokenExpiration(): number | null {
+  public getTokenExpiration(): number | null {
     const token = this.getToken();
     if (!token) return null;
     
@@ -46,7 +66,7 @@ export class AuthService {
     return payload.exp;
   }
 
-  isTokenExpired(): boolean { 
+  public isTokenExpired(): boolean { 
     const exp = this.getTokenExpiration();
     if (!exp) return true;
     

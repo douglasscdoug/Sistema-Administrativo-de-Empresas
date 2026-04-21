@@ -6,7 +6,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
   selector: 'app-root',
   imports: [RouterOutlet, NgxSpinnerModule],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  standalone: true
 })
 export class App {
   protected readonly title = signal('SistemaEmpresas-App');

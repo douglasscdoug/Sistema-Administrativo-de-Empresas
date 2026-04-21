@@ -10,10 +10,11 @@ import { debounceTime, finalize } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
 
 @Component({
   selector: 'app-usuario-list',
-  imports: [RouterLink, DateFormatPipe, CommonModule, PaginationModule, ReactiveFormsModule],
+  imports: [RouterLink, DateFormatPipe, CommonModule, PaginationModule, ReactiveFormsModule, HasRoleDirective],
   templateUrl: './usuario-list.component.html',
   styleUrl: './usuario-list.component.scss',
 })

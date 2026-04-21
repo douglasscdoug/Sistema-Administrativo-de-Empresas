@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaEmpresas.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using SistemaEmpresas.Infrastructure.Data;
 namespace SistemaEmpresas.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260420153622_AddRoleAndClaimsToUsuario")]
+    partial class AddRoleAndClaimsToUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
@@ -46,7 +49,7 @@ namespace SistemaEmpresas.Infrastructure.Migrations
                     b.HasIndex("EmpresaId")
                         .IsUnique();
 
-                    b.ToTable("Contatos", (string)null);
+                    b.ToTable("Contatos");
                 });
 
             modelBuilder.Entity("SistemaEmpresas.Domain.Entities.Empresa", b =>
@@ -73,7 +76,7 @@ namespace SistemaEmpresas.Infrastructure.Migrations
                     b.HasIndex("Cnpj")
                         .IsUnique();
 
-                    b.ToTable("Empresas", (string)null);
+                    b.ToTable("Empresas");
                 });
 
             modelBuilder.Entity("SistemaEmpresas.Domain.Entities.Endereco", b =>
@@ -124,7 +127,7 @@ namespace SistemaEmpresas.Infrastructure.Migrations
                     b.HasIndex("EmpresaId")
                         .IsUnique();
 
-                    b.ToTable("Enderecos", (string)null);
+                    b.ToTable("Enderecos");
                 });
 
             modelBuilder.Entity("SistemaEmpresas.Domain.Entities.Usuario", b =>
@@ -167,7 +170,7 @@ namespace SistemaEmpresas.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("SistemaEmpresas.Domain.Entities.Contato", b =>

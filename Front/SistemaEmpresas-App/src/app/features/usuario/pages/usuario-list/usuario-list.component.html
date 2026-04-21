@@ -4,7 +4,7 @@
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Filtros</h5>
-        <a class="d-flex btn btn-outline-success" routerLink="novo">
+        <a class="d-flex btn btn-outline-success" routerLink="novo" *hasRole="'Administrador'">
           <i class="fa fa-plus-circle my-1"></i>
           <b class="ms-1 d-none d-sm-block">Novo Usuario</b>
         </a>

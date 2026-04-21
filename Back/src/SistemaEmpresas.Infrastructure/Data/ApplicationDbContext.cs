@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SistemaEmpresas.Domain.Entities;
 
@@ -9,6 +10,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Empresa> Empresas { get; set; }
     public DbSet<Endereco> Enderecos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+
+    private static string SerializeClaims(List<string> claims) =>
+        JsonSerializer.Serialize(claims, new JsonSerializerOptions());
+    private static List<string> DeserializeClaims(string claims) =>
+        JsonSerializer.Deserialize<List<string>>(claims, new JsonSerializerOptions()) ?? new List<string>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -113,6 +119,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                     .HasMaxLength(256);
 
                 usuario.HasIndex(u => u.Email).IsUnique();
+
+                usuario.Ignore(u => u.Claims);
+
+                usuario.Property(u => u.Role).HasConversion<string>();
             }
         );
     }
