@@ -10,6 +10,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Empresa> Empresas { get; set; }
     public DbSet<Endereco> Enderecos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     private static string SerializeClaims(List<string> claims) =>
         JsonSerializer.Serialize(claims, new JsonSerializerOptions());
@@ -98,6 +99,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 endereco.Property(e => e.Cep)
                     .IsRequired()
                     .HasMaxLength(8);
+            }
+        );
+
+        modelBuilder.Entity<RefreshToken>(
+            rt =>
+            {
+                rt.HasOne(rt => rt.Usuario)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(rt => rt.UsuarioId);
             }
         );
 

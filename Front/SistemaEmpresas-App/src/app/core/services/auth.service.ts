@@ -21,24 +21,54 @@ export class AuthService {
     return this.userSubject.value;
   }
 
-  public setUser(user: Usuario) {
-    this.userSubject.next(user);
+  // Métodos CRUD
+  public getMe(): Observable<Usuario>{
+    return this.http.get<Usuario>(`${API.endpoints.usuario}/me`);
   }
 
   public login(credentials: any) {
-    return this.http.post<any>(API.endpoints.auth, credentials).pipe(
+    return this.http.post<any>(API.endpoints.auth.login, credentials).pipe(
       tap(response => {
         localStorage.setItem(this.tokenKey, response.token);
+        localStorage.setItem('refreshToken', response.refreshToken);
       })
     );
   }
 
   public logout() { 
+    const refreshToken = this.getRefreshToken();
+
+    if (refreshToken) {
+      this.http.post(API.endpoints.auth.logout, { refreshToken }).subscribe();
+    }
+
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('refreshToken');
   }
+  
+  public refreshToken() {
+    return this.http.post<any>(API.endpoints.auth.refresh, { refreshToken: this.getRefreshToken() });
+  }
+
+  // Métodos auxiliares
+  public getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
+  }
+
+  public getRole(): string | null {
+    return this.user?.role ?? null;
+  } 
 
   public getToken(): string | null { 
     return localStorage.getItem(this.tokenKey);
+  }
+
+  public getTokenExpiration(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp;
   }
 
   public getUser(): any {
@@ -46,14 +76,6 @@ export class AuthService {
     if (!token) return null;
 
     return jwtDecode(token);
-  }
-
-  public getMe(): Observable<Usuario>{
-    return this.http.get<Usuario>(`${API.endpoints.usuario}/me`);
-  }
-
-  public getRole(): string | null {
-    return this.user?.role ?? null;
   }
 
   public isAdmin(): boolean {
@@ -72,25 +94,29 @@ export class AuthService {
     return true;
   }
 
-  public getTokenExpiration(): number | null {
-    const token = this.getToken();
-    if (!token) return null;
-    
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.exp;
-  }
-
   public isTokenExpired(): boolean { 
     const exp = this.getTokenExpiration();
     if (!exp) return true;
     
     const now = Math.floor(Date.now() / 1000);
-    return exp < (now - 60); // Considera o token expirado 1 minuto antes para evitar problemas de sincronização
+    return exp < (now - 60);
   }
 
   public loadUser() {
     if (this.isAuthenticated()) {
       this.getMe().subscribe(user => this.setUser(user));
     }
+  }
+
+  public setRefreshToken(token: string) {
+    localStorage.setItem('refreshToken', token);
+  }
+
+  public setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  public setUser(user: Usuario) {
+    this.userSubject.next(user);
   }
 }

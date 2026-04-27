@@ -39,6 +39,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //3.Repositórios
 builder.Services.AddScoped<EmpresaRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<RefreshTokenRepository>();
 
 // 4. Services
 builder.Services.AddScoped<IEmpresaService, EmpresaService>();

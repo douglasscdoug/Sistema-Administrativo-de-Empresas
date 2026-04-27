@@ -1,8 +1,8 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -19,11 +19,38 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   return next(req).pipe(
-    catchError(err => {
-      if (err.status === 401) {
-        authService.logout();
-        router.navigate(['/login']);
+    catchError((err: HttpErrorResponse) => {
+
+      const isAuthRoute =
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/refresh');
+      
+      if (err.status === 401 && !isAuthRoute) {
+        return authService.refreshToken().pipe(
+          switchMap((response) => {
+
+            authService.setToken(response.token);
+            authService.setRefreshToken(
+              response.refreshToken
+            );
+
+            const retryRequest = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${response.token}`
+              }
+            });
+
+            return next(retryRequest);
+          }),
+          catchError((refreshError) => {
+            authService.logout();
+            router.navigate(['/login']);
+
+            return throwError(() => refreshError);
+          })
+        );
       }
+      
       return throwError(() => err);
     })
   );

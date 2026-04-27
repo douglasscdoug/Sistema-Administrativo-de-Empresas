@@ -13,4 +13,5 @@ public class Usuario
     public List<string> Claims { get; set; } = new List<String>();
     public bool Ativo { get; set; } = true;
     public DateTime DataCriacao { get; set; }
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
