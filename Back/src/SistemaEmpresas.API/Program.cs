@@ -15,10 +15,11 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurações
+// ---- Configurações ----
 var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
     .Get<JwtSettings>()
@@ -32,26 +33,39 @@ builder.Services.Configure<JwtSettings>(
 
 var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
 
-//2. DbContext
+// ---- Logging ----
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 7
+    )
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// ---- DbContext ----
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//3.Repositórios
+// ---- Repositórios ----
 builder.Services.AddScoped<EmpresaRepository>();
 builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<RefreshTokenRepository>();
 
-// 4. Services
+// ---- Services ----
 builder.Services.AddScoped<IEmpresaService, EmpresaService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// 5. FluentValidation
+// ---- FluentValidation ----
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<EmpresaDtoValidator>();
 
-// 6. Autenticação
+// ---- Autenticação ----
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -75,13 +89,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//7. Authorization
+// ---- Authorization ----
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
 });
 
-//8. Controllers e AutoMapper
+// ---- Controllers e AutoMapper ----
 builder.Services.AddAutoMapper(typeof(SistemaEmpresasProfile));
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -142,6 +156,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

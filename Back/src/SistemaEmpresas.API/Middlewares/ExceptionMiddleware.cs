@@ -9,11 +9,17 @@ public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IWebHostEnvironment _env;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env)
+    public ExceptionMiddleware(
+        RequestDelegate next,
+        IWebHostEnvironment env,
+        ILogger<ExceptionMiddleware> logger
+    )
     {
         _next = next;
         _env = env;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -24,14 +30,31 @@ public class ExceptionMiddleware
         }
         catch (BusinessException ex)
         {
+            _logger.LogWarning(
+                ex,
+                "Erro de regra de negócio: {Message}",
+                ex.Message
+            );
+
             await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message, ex);
         }
         catch (UnauthorizedException ex)
         {
+            _logger.LogWarning(
+                ex,
+                "Erro de autenticação/autorização: {Message}",
+                ex.Message
+            );
+
             await HandleExceptionAsync(context, HttpStatusCode.Unauthorized, ex.Message, ex);
         }
         catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Erro interno não tratado."
+            );
+            
             await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, "Erro interno no servidor", ex);
         }
     }
