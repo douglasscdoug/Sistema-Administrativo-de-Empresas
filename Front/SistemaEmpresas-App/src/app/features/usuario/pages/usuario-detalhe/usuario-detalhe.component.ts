@@ -4,7 +4,7 @@ import { UsuarioService } from '../../services/usuario.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { finalize } from 'rxjs';
 import { FormErrorService } from '../../../../core/services/form-error.service';
 import { senhaValidator } from '../../../../shared/validators/senha.validator';
@@ -26,6 +26,7 @@ export class UsuarioDetalheComponent implements OnInit {
   private actvatedRoute = inject(ActivatedRoute);
   private formErrorService = inject(FormErrorService);
   private authService = inject(AuthService);
+  private location = inject(Location);
 
   public usuarioId?: string | null = null;
   public isEditMode: boolean = !!this.usuarioId;
@@ -137,7 +138,7 @@ export class UsuarioDetalheComponent implements OnInit {
   }
 
   public voltar(): void {
-    this.router.navigate(['/usuarios']);
+    this.location.back();
   }
 
   private loadPerfil(): void {

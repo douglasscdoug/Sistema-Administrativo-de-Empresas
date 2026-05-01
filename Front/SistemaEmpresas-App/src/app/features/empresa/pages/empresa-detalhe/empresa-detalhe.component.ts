@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Empresa } from '../../models/empresa';
 import { EmpresaService } from '../../services/empresa.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule, KeyValuePipe } from '@angular/common';
+import { CommonModule, KeyValuePipe, Location } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
@@ -26,7 +26,8 @@ export class EmpresaDetalheComponent implements OnInit {
   private toaster = inject(ToastrService);
   private router = inject(Router);
   private spinner = inject(NgxSpinnerService);
-  private formErrorService = inject(FormErrorService)
+  private formErrorService = inject(FormErrorService);
+  private location = inject(Location);
 
   public empresaId?: string | null = null;
   public empresa = {} as Empresa;
@@ -127,6 +128,6 @@ export class EmpresaDetalheComponent implements OnInit {
 
   }
   public voltar(): void {
-    this.router.navigate(['/usuarios']);
+    this.location.back();
   }
 }
