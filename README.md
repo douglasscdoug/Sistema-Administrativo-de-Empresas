@@ -53,8 +53,6 @@ O sistema é voltado para uso interno, com foco em simplicidade, organização e
 
 ---
 
----
-
 ## 🏗️ Arquitetura
 
 O projeto foi desenvolvido utilizando arquitetura em camadas, promovendo separação de responsabilidades e facilidade de manutenção.
