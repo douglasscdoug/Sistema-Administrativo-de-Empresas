@@ -69,10 +69,19 @@ Estrutura:
 ## 📸 Screenshots
 
 ### Tela de Login
-<img src="./screenshots/login.png" width="800"/>
+<img src="./Screenshots/login.png" width="800"/>
 
 ### Listagem de Empresas
-<img src="./screenshots/empresas.png" width="800"/>
+<img src="./Screenshots/empresas.png" width="800"/>
+
+### Tela de cadastro e edição de Empresas
+<img src="./Screenshots/empresas-detalhe.png" width="800">
+
+### Listagem de Usuários
+<img src="./Screenshots/usuarios.png" width="800"/>
+
+### Tela de cadastro e edição de Usuários
+<img src="./Screenshots/usuarios-detalhe.png" width="800">
 
 ---
 
