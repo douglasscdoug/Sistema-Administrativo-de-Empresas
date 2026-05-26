@@ -10,5 +10,6 @@ public interface IEmpresaService
     Task<EmpresaResponseDto?> GetByIdAsync(Guid id);
     Task<EmpresaResponseDto> AddAsync(EmpresaRequestDto dto);
     Task<EmpresaResponseDto?> UpdateAsync(Guid id, EmpresaRequestDto dto);
+    Task<bool> AtivarEmpresaAsync(Guid id);
     Task<bool> DeleteAsync(Guid id);
 }

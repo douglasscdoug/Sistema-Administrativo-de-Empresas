@@ -76,5 +76,16 @@ namespace SistemaEmpresas.API.Controllers
             }
             return NoContent();
         }
+
+        [Authorize]
+        [HttpPatch("{id:guid}/ativar")]
+        public async Task<IActionResult> Ativar(Guid id)
+        {
+            var ativado = await _empresaService.AtivarEmpresaAsync(id);
+
+            if (!ativado) return NotFound();
+
+            return NoContent();
+        }
     }
 }

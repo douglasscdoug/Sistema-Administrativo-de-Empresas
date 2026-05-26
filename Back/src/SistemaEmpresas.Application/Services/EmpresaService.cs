@@ -225,6 +225,41 @@ public class EmpresaService : IEmpresaService
         return _mapper.Map<EmpresaResponseDto>(empresa);
     }
 
+    public async Task<bool> AtivarEmpresaAsync(Guid id)
+    {
+        _logger.LogInformation(
+            "Iniciando ativação de empresa {EmpresaId}",
+            id
+        );
+
+        var empresa = await _empresaRepository.GetByIdForUpdateAsync(id);
+
+        if (empresa == null)
+        {
+            _logger.LogWarning(
+                "Tentativa de ativação de empresa inexistente {EmpresaId}",
+                id
+            );
+
+            return false;
+        }
+
+        empresa.Ativo = true;
+
+        var success = await _empresaRepository.SaveChangesAsync();
+
+        if (success)
+        {
+            _logger.LogInformation(
+                "Empresa {EmpresaId} ativada com sucesso",
+
+                id
+            );
+        }
+
+        return success;
+    }
+
     public async Task<bool> DeleteAsync(Guid id)
     {
         _logger.LogInformation(
