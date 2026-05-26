@@ -11,10 +11,11 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { HasRoleDirective } from '../../../../shared/directives/has-role.directive';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-usuario-list',
-  imports: [RouterLink, DateFormatPipe, CommonModule, PaginationModule, ReactiveFormsModule, HasRoleDirective],
+  imports: [RouterLink, DateFormatPipe, CommonModule, PaginationModule, ReactiveFormsModule, HasRoleDirective, TooltipModule],
   templateUrl: './usuario-list.component.html',
   styleUrl: './usuario-list.component.scss',
 })
@@ -37,6 +38,7 @@ export class UsuarioListComponent implements OnInit {
   public loading = false;
   public orderBy =  '';
   public desc = false;
+  public ativarUsuario = false;
 
   public filtroForm = this.fb.group({
     nome: [''],
@@ -114,9 +116,10 @@ export class UsuarioListComponent implements OnInit {
     this.router.navigate([`/usuarios/${id}`]);
   }
 
-  public openModal(event: any, template: TemplateRef<void>, usuarioId: string): void {
+  public openModal(event: any, template: TemplateRef<void>, usuarioId: string, ativarUsuario: boolean): void {
     event.stopPropagation();
     this.usuarioId = usuarioId;
+    this.ativarUsuario = !ativarUsuario;
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
@@ -124,13 +127,26 @@ export class UsuarioListComponent implements OnInit {
     this.modalRef?.hide();
     this.spinner.show();
 
+    if (this.ativarUsuario) {
+      this.usuarioService.ativarUsuario(this.usuarioId)
+        .pipe(finalize(() => this.spinner.hide()))
+        .subscribe({
+          next: () => {
+            this.toaster.success('Usuário ativado com sucesso!', 'Sucesso');
+            this.buscar();
+          }
+        });
+      
+      return;
+    }
+
     this.usuarioService.delete(this.usuarioId)
       .pipe(
         finalize(() => this.spinner.hide())
       )
       .subscribe({
         next: () => {
-          this.toaster.success('Usuário deletado com sucesso!', 'Sucesso');
+          this.toaster.success('Usuário desativado com sucesso!', 'Sucesso');
           this.buscar();
         }
       });

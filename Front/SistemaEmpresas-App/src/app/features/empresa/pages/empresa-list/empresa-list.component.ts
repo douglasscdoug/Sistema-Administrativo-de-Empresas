@@ -149,7 +149,7 @@ export class EmpresaListComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.toaster.success('Empresa deletada com sucesso!', 'Sucesso');
+          this.toaster.success('Empresa desativada com sucesso!', 'Sucesso');
           this.buscar();
         }
       });

@@ -81,12 +81,19 @@
                   }
                 </td>
                 <td>{{ u.dataCriacao | dateFormat }}</td>
-                <td>
-                  <button class="btn btn-sm btn-primary me-2" (click)="usuarioDetalhe(u.id)">
-                    Editar
+                <td class="text-center">
+                  <button
+                    class="btn btn-sm btn-primary me-2"
+                    tooltip="Editar usuário"
+                    (click)="usuarioDetalhe(u.id)">
+                    <i class="bi bi-pencil"></i>
                   </button>
-                  <button class="btn btn-sm btn-danger" (click)="openModal($event, template, u.id)">
-                    Excluir
+                  <button
+                    class="btn btn-sm btn-danger"
+                    tooltip="{{u.ativo ? 'Desativar usuário' : 'Ativar usuário'}}"
+                    [ngClass]="u.ativo ? 'btn-danger' : 'btn-success'"
+                    (click)="openModal($event, template, u.id, u.ativo)">
+                    <i class="bi" [ngClass]="u.ativo ? 'bi-toggle-off' : 'bi-toggle-on'"></i>
                   </button>
                 </td>
               </tr>
@@ -140,7 +147,7 @@
 </div>
 <ng-template #template>
   <div class="modal-body text-center">
-    <p>Deseja realmente excluir este usuario?</p>
+    <p>Deseja realmente {{ ativarUsuario ? 'ativar' : 'desativar' }} este usuario?</p>
     <button type="button" class="btn btn-default" (click)="confirm()">Sim</button>
     <button type="button" class="btn btn-primary" (click)="declined()">Não</button>
   </div>

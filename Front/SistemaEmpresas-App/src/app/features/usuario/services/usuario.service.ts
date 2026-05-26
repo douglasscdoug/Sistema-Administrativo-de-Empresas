@@ -62,6 +62,12 @@ export class UsuarioService {
       .pipe(tap(() => this.limparCache()));
   }
 
+  public ativarUsuario(id: string): Observable<void> {
+    return this.http
+      .patch<void>(`${API.endpoints.usuario}/${id}/ativar`, {})
+      .pipe(tap(() => this.limparCache()));
+  }
+
   public delete(id: string): Observable<void> {
     return this.http
       .delete<void>(`${API.endpoints.usuario}/${id}`)
