@@ -10,10 +10,11 @@ import { NgxMaskPipe } from 'ngx-mask';
 import { debounceTime, finalize } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-empresa-list',
-  imports: [CommonModule, RouterLink, NgxMaskPipe, PaginationModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, NgxMaskPipe, PaginationModule, ReactiveFormsModule, TooltipModule],
   templateUrl: './empresa-list.component.html',
   styleUrl: './empresa-list.component.scss',
 })
@@ -38,6 +39,7 @@ export class EmpresaListComponent implements OnInit {
   public loading = false;
   public orderBy = '';
   public desc = false;
+  public ativarEmpresa = false;
 
   public filtroForm = this.fb.group({
     razaoSocial: [''],
@@ -115,15 +117,31 @@ export class EmpresaListComponent implements OnInit {
     this.router.navigate([`/empresas/${id}`]);
   }
 
-  public openModal(event: any, template: TemplateRef<void>, empresaId: string): void {
+  public openModal(event: any, template: TemplateRef<void>, empresaId: string, ativo: boolean): void {
     event.stopPropagation();
     this.empresaId = empresaId;
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+    this.ativarEmpresa = !ativo;
   }
 
   public confirm(): void {
     this.modalRef?.hide();
     this.spinner.show();
+
+    if (this.ativarEmpresa) {
+      this.empresaService.ativarEmpresa(this.empresaId)
+        .pipe(
+          finalize(() => this.spinner.hide())
+        )
+        .subscribe({
+          next: () => {
+            this.toaster.success('Empresa ativada com sucesso!', 'Sucesso');
+            this.buscar();
+          }
+        });
+      
+      return;
+    }
 
     this.empresaService.delete(this.empresaId)
       .pipe(

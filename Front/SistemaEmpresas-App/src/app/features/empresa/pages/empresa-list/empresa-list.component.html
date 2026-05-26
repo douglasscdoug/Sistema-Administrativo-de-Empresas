@@ -81,12 +81,21 @@
                     <span class="badge bg-danger">Não</span>
                   }
                 </td>
-                <td>
-                  <button class="btn btn-sm btn-primary me-2" (click)="empresaDetalhe(e.id)">
-                    Editar
+                <td class="text-center">
+                  <button 
+                    class="btn btn-sm btn-primary me-2"
+                    tooltip="Editar empresa"
+                    (click)="empresaDetalhe(e.id)"
+                  >
+                    <i class="bi bi-pencil"></i>
                   </button>
-                  <button class="btn btn-sm btn-danger" (click)="openModal($event, template, e.id)">
-                    Excluir
+                  <button 
+                    class="btn btn-sm"
+                    tooltip="{{e.ativo ? 'Desativar empresa' : 'Ativar empresa'}}"
+                    [ngClass]="e.ativo ? 'btn-danger' : 'btn-success'"
+                    (click)="openModal($event, template, e.id, e.ativo)"
+                  >
+                    <i class="bi" [ngClass]="e.ativo ? 'bi-toggle-off' : 'bi-toggle-on'"></i>
                   </button>
                 </td>
               </tr>
@@ -143,7 +152,7 @@
 
 <ng-template #template>
   <div class="modal-body text-center">
-    <p>Deseja realmente excluir esta empresa?</p>
+    <p>Deseja realmente {{ativarEmpresa ? 'ativar' : 'desativar'}} esta empresa?</p>
     <button type="button" class="btn btn-default" (click)="confirm()">Sim</button>
     <button type="button" class="btn btn-primary" (click)="declined()">Não</button>
   </div>

@@ -71,6 +71,12 @@ export class EmpresaService {
       .delete<void>(`${API.endpoints.empresa}/${id}`)
       .pipe(tap(() => this.limparCache()));
   }
+
+  public ativarEmpresa(id: string): Observable<void>{
+    return this.http
+      .patch<void>(`${API.endpoints.empresa}/${id}/ativar`, {})
+      .pipe(tap(() => this.limparCache()));
+  }
   //#endregion
 
   //#region Métodos auxiliares

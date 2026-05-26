@@ -10,6 +10,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { provideNgxMask } from 'ngx-mask';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,7 +23,8 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
     importProvidersFrom([
       ModalModule.forRoot(),
-      PaginationModule.forRoot()
+      PaginationModule.forRoot(),
+      TooltipModule.forRoot()
     ]),
     provideNgxMask()
   ]
