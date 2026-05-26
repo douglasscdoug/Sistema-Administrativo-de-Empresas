@@ -146,13 +146,13 @@ public class UsuarioService : IUsuarioService
         _logger.LogInformation("Iniciando atualização do usuário {UsuarioId}", id);
 
         var usuario = await _usuarioRepository.GetByIdForUpdateAsync(id);
-        if (usuario == null) 
+        if (usuario == null)
         {
             _logger.LogWarning("Tentativa de atualização de usuário inexistente {UsuarioId}", id);
             return null;
         }
 
-        if(usuario.Email != dto.Email)
+        if (usuario.Email != dto.Email)
         {
             var usuarioexistente = await _usuarioRepository.GetByEmailAsync(dto.Email);
             if (usuarioexistente != null)
@@ -180,6 +180,29 @@ public class UsuarioService : IUsuarioService
         return _mapper.Map<UsuarioResponseDto>(usuario);
     }
 
+    public async Task<bool> AtivarUsuarioAsync(Guid id)
+    {
+        _logger.LogInformation("Iniciando ativação do usuário {UsuarioId}", id);
+
+        var usuario = await _usuarioRepository.GetByIdForUpdateAsync(id);
+        if (usuario == null)
+        {
+            _logger.LogWarning("Tentativa de ativação de usuário inexistente {UsuarioId}", id);
+            return false;
+        }
+
+        usuario.Ativo = true;
+
+        var success = await _usuarioRepository.SaveChangesAsync();
+
+        if (success)
+        {
+            _logger.LogInformation("Usuário {UsuarioId} ativado com sucesso", id);
+        }
+
+        return success;
+    }
+
     public async Task<bool> DeleteAsync(Guid id)
     {
         _logger.LogInformation("Iniciando exclusão lógica do usuário {UsuarioId}", id);
@@ -195,7 +218,7 @@ public class UsuarioService : IUsuarioService
 
         var success = await _usuarioRepository.SaveChangesAsync();
 
-        if(success) _logger.LogInformation("Usuário {UsuarioId} desativado com sucesso", id);
+        if (success) _logger.LogInformation("Usuário {UsuarioId} desativado com sucesso", id);
 
         return success;
     }

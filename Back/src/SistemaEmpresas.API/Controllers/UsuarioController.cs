@@ -76,17 +76,28 @@ namespace SistemaEmpresas.API.Controllers
             if (User.GetUserRole() != "Administrador" &&
                 User.GetUserId() != id) return Forbid();
 
-            if(User.GetUserRole() != "Administrador")
+            if (User.GetUserRole() != "Administrador")
             {
                 dto.Role = usuarioExistente.Role;
             }
-                
+
             if (dto == null) return BadRequest();
 
             var usuario = await _usuarioService.UpdateAsync(id, dto);
             if (usuario == null) return NotFound();
 
             return Ok(usuario);
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPatch("{id:guid}/ativar")]
+        public async Task<IActionResult> Ativar(Guid id)
+        {
+            var ativado = await _usuarioService.AtivarUsuarioAsync(id);
+
+            if (!ativado) return NotFound();
+
+            return NoContent();
         }
 
         [Authorize(Policy = "AdminOnly")]
