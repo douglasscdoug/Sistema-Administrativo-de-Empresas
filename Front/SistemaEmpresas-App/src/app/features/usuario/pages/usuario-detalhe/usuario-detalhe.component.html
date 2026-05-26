@@ -1,4 +1,6 @@
-<h4>
+<h4><i 
+  class="bi"
+  [ngClass]="isEditMode ? 'bi-person-fill-gear' : isPerfil ? 'bi-person-fill-gear' : 'bi-person-fill-add'"></i>
   {{ 
     this.isEditMode ? 'Editar Usuário' :
     this.isPerfil ?  'Meu Perfil' :
@@ -103,10 +105,10 @@
         <div class="card-footer">
           <div class="d-flex">
             <button class="btn btn-outline-secondary me-auto border" (click)="voltar()">
-              Voltar
+              <i class="bi bi-chevron-left"></i> Voltar
             </button>
             <button class="btn btn-success" [disabled]="!form.valid" (click)="salvar()">
-              Salvar
+              <i class="bi bi-floppy"></i> Salvar
             </button>
           </div>
         </div>

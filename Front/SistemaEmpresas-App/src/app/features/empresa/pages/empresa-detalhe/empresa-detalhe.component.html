@@ -1,4 +1,4 @@
-<h4>{{this.isEditMode ? 'Editar' : 'Adicionar'}} empresa</h4>
+<h4><i class="bi" [ngClass]="isEditMode ? 'bi-building-fill-gear' : 'bi-building-fill-add'"></i> {{this.isEditMode ? 'Editar' : 'Adicionar'}} empresa</h4>
 <div class="row">
   <div class="col-md-12">
     <div class="card rounded shadow-sm">
@@ -198,16 +198,16 @@
         <div class="card-footer">
           <div class="d-flex">
             <button
-              class="btn btn-outline-secondary me-auto border"
+              class="btn btn-secondary me-auto border"
               (click)="voltar()"
             >
-              Voltar
+            <i class="bi bi-chevron-left"></i> Voltar
             </button>
             <button
               class="btn btn-success"
               [disabled]="!form.valid"
               (click)="salvar()"
-            >Salvar
+            ><i class="bi bi-floppy"></i> Salvar
             </button>
           </div>
         </div>

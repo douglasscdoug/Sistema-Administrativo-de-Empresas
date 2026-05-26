@@ -1,14 +1,21 @@
 <div class="container-fluid">
-  <h4>Empresas</h4>
+  <h4><i class="bi bi-building"></i> Empresas</h4>
   <!-- 🔎 FILTROS -->
   <div class="card mb-3">
     <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center mb-3">
         <h5 class="mb-0">Filtros</h5>
-        <a class="d-flex btn btn-outline-success" routerLink="nova">
-          <i class="fa fa-plus-circle my-1"></i>
-          <b class="ms-1 d-none d-sm-block">Nova Empresa</b>
-        </a>
+        <div class="ms-auto">
+          <button
+            type="button"
+            class="btn btn-outline-success ms-auto"
+            tooltip="Nova empresa"
+            placement="left"
+            routerLink="nova"
+          >
+            <i class="bi bi-building-add"></i>
+          </button>
+        </div>
       </div>
       <form [formGroup]="filtroForm" class="row g-3">
         <div class="col-md-4">
@@ -46,22 +53,22 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th (click)="ordenar('razaoSocial')" style="cursor: pointer;">
+              <th (click)="ordenar('razaoSocial')" style="cursor: pointer">
                 Razão Social
-                @if(orderBy === 'razaoSocial'){
-                  <span>{{desc ? '🔽' : '🔼'}}</span>
+                @if (orderBy === 'razaoSocial') {
+                  <span>{{ desc ? '🔽' : '🔼' }}</span>
                 }
               </th>
-              <th (click)="ordenar('cnpj')" style="cursor: pointer;">
+              <th (click)="ordenar('cnpj')" style="cursor: pointer">
                 CNPJ
-                @if(orderBy === 'cnpj'){
-                  <span>{{desc ? '🔽' : '🔼'}}</span>
+                @if (orderBy === 'cnpj') {
+                  <span>{{ desc ? '🔽' : '🔼' }}</span>
                 }
               </th>
-              <th (click)="ordenar('ativo')" style="cursor: pointer;">
+              <th (click)="ordenar('ativo')" style="cursor: pointer">
                 Ativo
-                @if(orderBy === 'ativo'){
-                  <span>{{desc ? '🔽' : '🔼'}}</span>
+                @if (orderBy === 'ativo') {
+                  <span>{{ desc ? '🔽' : '🔼' }}</span>
                 }
               </th>
               <th>Ações</th>
@@ -82,16 +89,16 @@
                   }
                 </td>
                 <td class="text-center">
-                  <button 
+                  <button
                     class="btn btn-sm btn-primary me-2"
                     tooltip="Editar empresa"
                     (click)="empresaDetalhe(e.id)"
                   >
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button 
+                  <button
                     class="btn btn-sm"
-                    tooltip="{{e.ativo ? 'Desativar empresa' : 'Ativar empresa'}}"
+                    tooltip="{{ e.ativo ? 'Desativar empresa' : 'Ativar empresa' }}"
                     [ngClass]="e.ativo ? 'btn-danger' : 'btn-success'"
                     (click)="openModal($event, template, e.id, e.ativo)"
                   >
@@ -152,7 +159,7 @@
 
 <ng-template #template>
   <div class="modal-body text-center">
-    <p>Deseja realmente {{ativarEmpresa ? 'ativar' : 'desativar'}} esta empresa?</p>
+    <p>Deseja realmente {{ ativarEmpresa ? 'ativar' : 'desativar' }} esta empresa?</p>
     <button type="button" class="btn btn-default" (click)="confirm()">Sim</button>
     <button type="button" class="btn btn-primary" (click)="declined()">Não</button>
   </div>

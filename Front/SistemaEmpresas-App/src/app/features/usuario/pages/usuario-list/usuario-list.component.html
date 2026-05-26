@@ -1,13 +1,21 @@
 <div class="container-fluid">
-  <h4>Usuarios</h4>
+  <h4><i class="bi bi-people"></i> Usuários</h4>
   <div class="card mb-3">
     <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center mb-3">
         <h5 class="mb-0">Filtros</h5>
-        <a class="d-flex btn btn-outline-success" routerLink="novo" *hasRole="'Administrador'">
-          <i class="fa fa-plus-circle my-1"></i>
-          <b class="ms-1 d-none d-sm-block">Novo Usuario</b>
-        </a>
+        <div class="ms-auto">
+          <button
+            type="button"
+            class="btn btn-outline-success ms-auto"
+            tooltip="Nova usuário"
+            placement="left"
+            routerLink="novo"
+            *hasRole="'Administrador'"
+          >
+            <i class="bi bi-building-add"></i>
+          </button>
+        </div>
       </div>
       <form [formGroup]="filtroForm" class="row g-3">
         <div class="col-md-4">
@@ -89,9 +97,9 @@
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button
-                    class="btn btn-sm btn-danger"
+                    class="btn btn-sm"
                     tooltip="{{u.ativo ? 'Desativar usuário' : 'Ativar usuário'}}"
-                    [ngClass]="u.ativo ? 'btn-danger' : 'btn-success'"
+                    [ngClass]="u.ativo ? 'btn-danger' : 'btn-success'" 
                     (click)="openModal($event, template, u.id, u.ativo)">
                     <i class="bi" [ngClass]="u.ativo ? 'bi-toggle-off' : 'bi-toggle-on'"></i>
                   </button>
