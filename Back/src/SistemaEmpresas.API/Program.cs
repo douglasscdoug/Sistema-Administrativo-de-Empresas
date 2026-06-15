@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using SistemaEmpresas.API.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -154,6 +155,14 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    await SeedData.SeedAdminAsync(context, logger);
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 
