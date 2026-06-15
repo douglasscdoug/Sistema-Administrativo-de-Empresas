@@ -34,4 +34,19 @@ public static class SeedData
 
         logger.LogInformation("Usuário administrador padrão criado com sucesso.");
     }
+
+    public static async Task SeedDemoDataAsync(ApplicationDbContext context, ILogger logger)
+    {
+        var dataExists = await context.Empresas.AnyAsync();
+
+        if(dataExists) return;
+
+        context.Empresas.AddRange(DemoData.Empresas);
+
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Empresas de demonstração adicionadas com sucesso");
+    }
+
+
 }

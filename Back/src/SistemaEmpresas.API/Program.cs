@@ -162,6 +162,8 @@ using (var scope = app.Services.CreateScope())
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
     await SeedData.SeedAdminAsync(context, logger);
+
+    if(app.Environment.IsDevelopment()) await SeedData.SeedDemoDataAsync(context, logger);
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
