@@ -51,13 +51,23 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // ---- DbContext ----
-var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "sistema_empresas.db");
+var dbFolder = Path.Combine(AppContext.BaseDirectory, "Data");
+
+if (!Directory.Exists(dbFolder))
+{
+    Directory.CreateDirectory(dbFolder);
+}
+
+var dbPath = Path.Combine(dbFolder, "sistema_empresas.db");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? $"Data Source={dbPath}";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString(connectionString)));
+    options.UseSqlite(
+        $"Data Source={dbPath}",
+        x => x.MigrationsAssembly("SistemaEmpresas.Infrastructure")
+    ));
 
 // ---- Repositórios ----
 builder.Services.AddScoped<EmpresaRepository>();
@@ -173,9 +183,18 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-    await SeedData.SeedAdminAsync(context, logger);
+    await context.Database.MigrateAsync();
 
-    if(app.Environment.IsDevelopment()) await SeedData.SeedDemoDataAsync(context, logger);
+    try
+    {
+        await SeedData.SeedAdminAsync(context, logger);
+
+        if (app.Environment.IsDevelopment()) await SeedData.SeedDemoDataAsync(context, logger);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Erro ao executar seed.");
+    }
 }
 
 // ---- Middlewares ----
@@ -200,5 +219,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/", () => "SistemaEmpresas API online");
 
 app.Run();
