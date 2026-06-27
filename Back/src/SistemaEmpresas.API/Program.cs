@@ -20,6 +20,9 @@ using SistemaEmpresas.API.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ---- Porta (RailWay) ----
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
+
 // ---- Configurações ----
 var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
@@ -48,8 +51,13 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // ---- DbContext ----
+var dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "sistema_empresas.db");
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? $"Data Source={dbPath}";
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString(connectionString)));
 
 // ---- Repositórios ----
 builder.Services.AddScoped<EmpresaRepository>();
@@ -105,7 +113,7 @@ builder.Services.AddControllers()
             new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// ---- Swagger ----
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -123,7 +131,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Insira o token JWT no formato: Bearer {seu_token}"
+        Description = "Insira o token JWT"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -142,6 +150,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ---- Cors ----
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -156,6 +166,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// ---- Seed ----
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -166,11 +178,13 @@ using (var scope = app.Services.CreateScope())
     if(app.Environment.IsDevelopment()) await SeedData.SeedDemoDataAsync(context, logger);
 }
 
+// ---- Middlewares ----
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<RequestLoggingMiddleware>();
 
-// Configure the HTTP request pipeline.
+// ---- Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
