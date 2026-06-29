@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, switchMap } from 'rxjs';
 import { FormErrorService } from '../../../../core/services/form-error.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class LoginComponent {
   private router = inject(Router);
   private spinner = inject(NgxSpinnerService);
   private formErrorService = inject(FormErrorService);
+  private toastr = inject(ToastrService);
 
   public get f(): any {
     return this.form.controls;
@@ -43,7 +45,15 @@ export class LoginComponent {
           this.authService.setUser(user);
           this.router.navigate(['/dashboard']);
         },
-        error: (err) => this.formErrorService.aplicarErros(this.form, err)
+        error: (err) => {
+          const apiError = err.error?.errors?.Erro?.[0];
+
+          if (apiError) {
+            this.toastr.error(apiError, 'Erro');
+            return;
+          }
+          this.formErrorService.aplicarErros(this.form, err)
+        }
       });
   }
 }
