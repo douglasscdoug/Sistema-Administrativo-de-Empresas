@@ -189,7 +189,7 @@ using (var scope = app.Services.CreateScope())
     {
         await SeedData.SeedAdminAsync(context, logger);
 
-        if (app.Environment.IsDevelopment()) await SeedData.SeedDemoDataAsync(context, logger);
+        await SeedData.SeedDemoDataAsync(context, logger);
     }
     catch (Exception ex)
     {
